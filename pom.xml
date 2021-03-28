@@ -38,6 +38,7 @@
     </scm>
 
     <properties>
+        <jpa>2.2</jpa>
         <slf4j>1.7.30</slf4j>
 
         <!--BUILD-->
@@ -69,6 +70,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <artifactId>javax.persistence-api</artifactId>
+            <groupId>javax.persistence</groupId>
+            <version>${jpa}</version>
+        </dependency>
         <dependency>
             <artifactId>slf4j-api</artifactId>
             <groupId>org.slf4j</groupId>

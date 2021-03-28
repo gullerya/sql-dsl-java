@@ -2,10 +2,11 @@ package com.gullerya.typedsql.entities.test;
 
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.entities.EntitiesService;
-import com.gullerya.typedsql.entities.Entity;
 import com.gullerya.typedsql.entities.EntityField;
 import org.junit.Test;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.sql.DataSource;
 
 public class ServiceTest {
@@ -59,33 +60,39 @@ public class ServiceTest {
 	/**
 	 * entities to test with
 	 */
-	@Entity(value = "table", schema = "schema")
+	@Entity
+	@Table(name = "table", schema = "schema")
 	static class EntityInvalidNotPublic {
 	}
 
-	@Entity(value = "table", schema = "schema")
+	@Entity
+	@Table(name = "table", schema = "schema")
 	public static class EntityInvalidNoCtorA {
 		protected EntityInvalidNoCtorA() {
 		}
 	}
 
-	@Entity(value = "table", schema = "schema")
+	@Entity
+	@Table(name = "table", schema = "schema")
 	public static class EntityInvalidNoCtorB {
 		public EntityInvalidNoCtorB(String some) {
 		}
 	}
 
-	@Entity(value = "table")
+	@Entity
+	@Table(name = "table")
 	public static class EntityInvalidNoFields {
 	}
 
-	@Entity(value = "table", schema = "schema")
+	@Entity
+	@Table(name = "table", schema = "schema")
 	public static class EntityInvalidFieldPrimitive {
 		@EntityField("prim")
 		public long l;
 	}
 
-	@Entity(value = "table")
+	@Entity
+	@Table(name = "table")
 	public static class EntityInvalidFieldNotPublic {
 		@EntityField("pp")
 		Long l;

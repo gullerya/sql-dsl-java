@@ -1,5 +1,7 @@
 package com.gullerya.typedsql.entities;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -109,7 +111,17 @@ public abstract class EntitiesService<T> implements Insert<T>, Select<T>, Update
 			if (e == null) {
 				throw new IllegalArgumentException("type " + type + " MUST be annotated with " + Entity.class);
 			}
-			fqSchemaTableName = (!e.schema().isEmpty() ? ("\"" + (e.schema()) + "\".\"") : "\"") + e.value() + "\"";
+			String tmpName = !e.name().isEmpty() ? e.name() : type.getSimpleName();
+			Table t = type.getDeclaredAnnotation(Table.class);
+			if (t != null) {
+				tmpName = !t.name().isEmpty() ? t.name() : tmpName;
+				fqSchemaTableName = "\"" +
+						(!t.schema().isEmpty() ? (t.schema() + "\".\"") : "") +
+						tmpName +
+				"\"";
+			} else {
+				fqSchemaTableName = "\"" + tmpName + "\"";
+			}
 
 			Map<String, FieldMetadata> tmpByFName = new HashMap<>();
 			Map<String, FieldMetadata> tmpByColumn = new HashMap<>();

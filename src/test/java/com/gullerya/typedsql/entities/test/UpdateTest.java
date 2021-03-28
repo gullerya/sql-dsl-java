@@ -5,13 +5,14 @@ import com.gullerya.typedsql.configuration.DataSourceDetails;
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.configuration.DataSourceProviderSPI;
 import com.gullerya.typedsql.entities.EntitiesService;
-import com.gullerya.typedsql.entities.Entity;
 import com.gullerya.typedsql.entities.EntityField;
 import com.gullerya.typedsql.entities.Literal;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -148,7 +149,8 @@ public class UpdateTest {
 		usersService.update(new User(), Literal.exp("none", "DEFAULT"));
 	}
 
-	@Entity(value = TABLE_NAME, schema = DBUtils.DAL_TESTS_SCHEMA)
+	@Entity
+	@Table(name = TABLE_NAME, schema = DBUtils.DAL_TESTS_SCHEMA)
 	public static final class User {
 		@EntityField(value = "id", readonly = true)
 		public Long id;

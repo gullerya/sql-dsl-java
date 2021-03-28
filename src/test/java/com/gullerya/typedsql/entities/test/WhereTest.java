@@ -2,11 +2,12 @@ package com.gullerya.typedsql.entities.test;
 
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.entities.EntitiesService;
-import com.gullerya.typedsql.entities.Entity;
 import com.gullerya.typedsql.entities.EntityField;
 import com.gullerya.typedsql.entities.Where;
 import org.junit.Test;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -87,7 +88,8 @@ public class WhereTest {
 				.where(Where.eq("none", 6));
 	}
 
-	@Entity("some")
+	@Entity
+	@Table(name = "some")
 	public static class TestEnt {
 		@EntityField("some")
 		public String some;

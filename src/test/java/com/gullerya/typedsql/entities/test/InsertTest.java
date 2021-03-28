@@ -2,10 +2,11 @@ package com.gullerya.typedsql.entities.test;
 
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.entities.EntitiesService;
-import com.gullerya.typedsql.entities.Entity;
 import com.gullerya.typedsql.entities.EntityField;
 import org.junit.Test;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +35,8 @@ public class InsertTest {
 	/**
 	 * entities to test with
 	 */
-	@Entity(value = "table", schema = "schema")
+	@Entity
+	@Table(name = "table", schema = "schema")
 	public static final class InsertTestEntity {
 		@EntityField("id")
 		public Long id;

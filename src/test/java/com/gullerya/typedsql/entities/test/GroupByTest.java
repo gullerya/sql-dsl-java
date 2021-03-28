@@ -5,13 +5,14 @@ import com.gullerya.typedsql.configuration.DataSourceDetails;
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.configuration.DataSourceProviderSPI;
 import com.gullerya.typedsql.entities.EntitiesService;
-import com.gullerya.typedsql.entities.Entity;
 import com.gullerya.typedsql.entities.EntityField;
 import com.gullerya.typedsql.entities.OrderBy;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -154,7 +155,8 @@ public class GroupByTest {
 		es.select("id").groupBy("id").orderBy(OrderBy.asc("author"));
 	}
 
-	@Entity(value = TABLE_NAME, schema = DBUtils.DAL_TESTS_SCHEMA)
+	@Entity
+	@Table(name = TABLE_NAME, schema = DBUtils.DAL_TESTS_SCHEMA)
 	public static final class Book {
 		@EntityField(value = "id", readonly = true)
 		public Long id;

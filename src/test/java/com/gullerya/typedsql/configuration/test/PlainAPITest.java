@@ -5,6 +5,10 @@ import com.gullerya.typedsql.configuration.DataSourceProviderSPI;
 import org.junit.Assert;
 import org.junit.Test;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 public class PlainAPITest {
 
 	@Test

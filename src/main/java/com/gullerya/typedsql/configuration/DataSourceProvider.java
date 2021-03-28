@@ -54,15 +54,15 @@ public abstract class DataSourceProvider {
 			}
 
 			DataSourceProvider result = dsProviders.get(dspConfigurer);
-			if (result == null) {
-				synchronized (dsInitLock) {
-					result = dsProviders.get(dspConfigurer);
-					if (result == null) {
-						result = new DataSourceProviderImpl(dspConfigurer);
-						dsProviders.put(dspConfigurer, result);
-					}
-				}
-			}
+//			if (result == null) {
+//				synchronized (dsInitLock) {
+//					result = dsProviders.get(dspConfigurer);
+//					if (result == null) {
+//						result = new DataSourceProviderImpl(dspConfigurer);
+//						dsProviders.put(dspConfigurer, result);
+//					}
+//				}
+//			}
 			return result;
 		}
 	}

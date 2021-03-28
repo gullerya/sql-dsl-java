@@ -6,12 +6,13 @@ import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.configuration.DataSourceProviderSPI;
 import com.gullerya.typedsql.entities.OrderBy;
 import com.gullerya.typedsql.entities.EntitiesService;
-import com.gullerya.typedsql.entities.Entity;
 import com.gullerya.typedsql.entities.EntityField;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -372,7 +373,8 @@ public class SelectTest {
 		EntitiesService.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(1, 0);
 	}
 
-	@Entity(value = TABLE_NAME, schema = DBUtils.DAL_TESTS_SCHEMA)
+	@Entity
+	@Table(name = TABLE_NAME, schema = DBUtils.DAL_TESTS_SCHEMA)
 	public static final class User {
 		@EntityField(value = "id", readonly = true, nullable = false)
 		public Long id;

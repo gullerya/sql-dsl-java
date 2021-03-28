@@ -2,11 +2,12 @@ package com.gullerya.typedsql.entities.test;
 
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.entities.EntitiesService;
-import com.gullerya.typedsql.entities.Entity;
 import com.gullerya.typedsql.entities.EntityField;
 import com.gullerya.typedsql.entities.OrderBy;
 import org.junit.Test;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.sql.DataSource;
 
 public class OrderByTest {
@@ -51,7 +52,8 @@ public class OrderByTest {
 				.orderBy(OrderBy.asc("id"));
 	}
 
-	@Entity("some")
+	@Entity
+	@Table(name = "some")
 	public static class TestEnt {
 		@EntityField("id")
 		public String id;

@@ -5,7 +5,6 @@ import com.gullerya.typedsql.configuration.DataSourceDetails;
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.configuration.DataSourceProviderSPI;
 import com.gullerya.typedsql.entities.EntitiesService;
-import com.gullerya.typedsql.entities.Entity;
 import com.gullerya.typedsql.entities.EntityField;
 import com.gullerya.typedsql.entities.Literal;
 import com.gullerya.typedsql.entities.OrderBy;
@@ -13,6 +12,8 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -144,7 +145,8 @@ public class LiteralsTest {
 		es.update(new LitTestEnt(), Literal.exp("price", "DEFAULT"), Literal.exp("non-existing", "CURRENT_TIMESTAMP")).all();
 	}
 
-	@Entity(value = TABLE_NAME, schema = DBUtils.DAL_TESTS_SCHEMA)
+	@Entity
+	@Table(name = TABLE_NAME, schema = DBUtils.DAL_TESTS_SCHEMA)
 	public static final class LitTestEnt {
 		@EntityField("id")
 		public Long id;
