@@ -168,12 +168,12 @@
                 <plugin>
                     <artifactId>jacoco-maven-plugin</artifactId>
                     <groupId>org.jacoco</groupId>
-                    <version>${jacoco-maven-plugin.version}</version>
+                    <version>${jacoco-maven-plugin}</version>
                 </plugin>
                 <plugin>
                     <artifactId>sql-maven-plugin</artifactId>
                     <groupId>org.codehaus.mojo</groupId>
-                    <version>${sql-maven-plugin.version}</version>
+                    <version>${sql-maven-plugin}</version>
                     <configuration>
                         <driver>${tests.db.driver}</driver>
                         <url>${tests.db.url}</url>
@@ -184,7 +184,7 @@
                 <plugin>
                     <artifactId>spotbugs-maven-plugin</artifactId>
                     <groupId>com.github.spotbugs</groupId>
-                    <version>${spotbugs.version}</version>
+                    <version>${spotbugs}</version>
                     <configuration>
                         <effort>max</effort>
                         <maxRank>20</maxRank>
@@ -196,13 +196,6 @@
                             </goals>
                         </execution>
                     </executions>
-                    <dependencies>
-                        <dependency>
-                            <artifactId>spotbugs</artifactId>
-                            <groupId>com.github.spotbugs</groupId>
-                            <version>${spotbugs}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
 
                 <!--DEPLOY-->
