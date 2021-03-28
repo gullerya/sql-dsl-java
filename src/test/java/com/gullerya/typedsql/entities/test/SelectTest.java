@@ -5,7 +5,7 @@ import com.gullerya.typedsql.configuration.DataSourceDetails;
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.configuration.DataSourceProviderSPI;
 import com.gullerya.typedsql.entities.OrderBy;
-import com.gullerya.typedsql.entities.EntitiesService;
+import com.gullerya.typedsql.entities.EntityService;
 import com.gullerya.typedsql.entities.EntityField;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -67,7 +67,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadAll() {
-		EntitiesService.of(User.class, dataSource).delete();
+		EntityService.of(User.class, dataSource).delete();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -76,10 +76,10 @@ public class SelectTest {
 		usersToInsert.add(new User(1002L, 1, true, "Sam", "3", bday));
 		usersToInsert.add(new User(1003L, 1, true, "Sam", "4", bday));
 		usersToInsert.add(new User(1004L, 1, true, "Sam", "5", bday));
-		int[] result = EntitiesService.of(User.class, dataSource).insert(usersToInsert);
+		int[] result = EntityService.of(User.class, dataSource).insert(usersToInsert);
 		Assert.assertTrue(IntStream.of(result).allMatch(i -> i == 1));
 
-		List<User> users = EntitiesService.of(User.class, dataSource)
+		List<User> users = EntityService.of(User.class, dataSource)
 				.select("id", "state", "ready", "first_name", "birthday", "created")
 				.read();
 
@@ -97,13 +97,13 @@ public class SelectTest {
 
 	@Test
 	public void testReadOne() {
-		EntitiesService.of(User.class, dataSource).delete();
+		EntityService.of(User.class, dataSource).delete();
 
 		User userToInsert = new User(2000L, 4, false, "Sam", "1", null);
-		boolean ir = EntitiesService.of(User.class, dataSource).insert(userToInsert);
+		boolean ir = EntityService.of(User.class, dataSource).insert(userToInsert);
 		Assert.assertTrue(ir);
 
-		User user = EntitiesService.of(User.class, dataSource)
+		User user = EntityService.of(User.class, dataSource)
 				.select("id", "state", "first_name", "birthday")
 				.where(eq("id", 2000))
 				.readSingle();
@@ -117,7 +117,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadManyNoLimit() {
-		EntitiesService.of(User.class, dataSource).delete();
+		EntityService.of(User.class, dataSource).delete();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -126,10 +126,10 @@ public class SelectTest {
 		usersToInsert.add(new User(3000L, 0, true, "Sam", "3", bday));
 		usersToInsert.add(new User(3001L, 1, true, "Sam", "4", bday));
 		usersToInsert.add(new User(3001L, 0, true, "Sam", "5", bday));
-		int[] result = EntitiesService.of(User.class, dataSource).insert(usersToInsert);
+		int[] result = EntityService.of(User.class, dataSource).insert(usersToInsert);
 		Assert.assertTrue(IntStream.of(result).allMatch(i -> i == 1));
 
-		List<User> users = EntitiesService.of(User.class, dataSource)
+		List<User> users = EntityService.of(User.class, dataSource)
 				.select("id", "state", "first_name", "last_name")
 				.where(and(eq("first_name", "Sam"), eq("state", 0)))
 				.orderBy(OrderBy.desc("id"), OrderBy.asc("last_name"))
@@ -154,7 +154,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadManyWithLimitNoOffset() {
-		EntitiesService.of(User.class, dataSource).delete();
+		EntityService.of(User.class, dataSource).delete();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -165,10 +165,10 @@ public class SelectTest {
 		usersToInsert.add(new User(4005L, 3, true, "CSam", "5", bday));
 		usersToInsert.add(new User(4006L, 3, true, "BSam", "6", bday));
 		usersToInsert.add(new User(4007L, 0, true, "ASam", "7", bday));
-		int[] result = EntitiesService.of(User.class, dataSource).insert(usersToInsert);
+		int[] result = EntityService.of(User.class, dataSource).insert(usersToInsert);
 		Assert.assertTrue(IntStream.of(result).allMatch(i -> i == 1));
 
-		List<User> users = EntitiesService.of(User.class, dataSource)
+		List<User> users = EntityService.of(User.class, dataSource)
 				.select("id", "state", "first_name", "last_name", "birthday")
 				.where(not(eq("state", 3)))
 				.orderBy(OrderBy.asc("first_name"))
@@ -190,7 +190,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadManyWithOffsetNoLimit() {
-		EntitiesService.of(User.class, dataSource).delete();
+		EntityService.of(User.class, dataSource).delete();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -203,10 +203,10 @@ public class SelectTest {
 		usersToInsert.add(new User(5006L, 3, false, "BSam", "6", bday));
 		usersToInsert.add(new User(5007L, 0, false, "ASam", "7", bday));
 		usersToInsert.forEach(u -> u.locales = lns);
-		int[] result = EntitiesService.of(User.class, dataSource).insert(usersToInsert);
+		int[] result = EntityService.of(User.class, dataSource).insert(usersToInsert);
 		Assert.assertTrue(IntStream.of(result).allMatch(i -> i == 1));
 
-		List<User> users = EntitiesService.of(User.class, dataSource)
+		List<User> users = EntityService.of(User.class, dataSource)
 				.select("id", "ready", "first_name", "last_name", "birthday", "locales")
 				.where(or(eq("ready", true), notEq("first_name", "Jim")))
 				.orderBy(OrderBy.desc("last_name"))
@@ -245,7 +245,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadManyWithLimitOffset() {
-		EntitiesService.of(User.class, dataSource).delete();
+		EntityService.of(User.class, dataSource).delete();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -258,16 +258,16 @@ public class SelectTest {
 		usersToInsert.add(new User(6006L, 3, false, "BSam", "6", bday));
 		usersToInsert.add(new User(6007L, 0, false, "ASam", "7", bday));
 		usersToInsert.forEach(u -> u.locales = lns);
-		int[] result = EntitiesService.of(User.class, dataSource).insert(usersToInsert);
+		int[] result = EntityService.of(User.class, dataSource).insert(usersToInsert);
 		Assert.assertTrue(IntStream.of(result).allMatch(i -> i == 1));
 
-		List<User> users = EntitiesService.of(User.class, dataSource)
+		List<User> users = EntityService.of(User.class, dataSource)
 				.select("id", "state", "first_name", "last_name", "birthday", "locales")
 				.where(in("id", Arrays.asList(6001, 6003, 6004, 6007)))
 				.orderBy(OrderBy.asc("state"), OrderBy.desc("last_name"))
 				.read(1, 2);
 
-		EntitiesService.of(User.class, dataSource).delete();
+		EntityService.of(User.class, dataSource).delete();
 
 		Assert.assertNotNull(users);
 		Assert.assertEquals(2, users.size());
@@ -288,59 +288,59 @@ public class SelectTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeA() {
-		EntitiesService.of(User.class, dataSource).select();
+		EntityService.of(User.class, dataSource).select();
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeB() {
-		EntitiesService.of(User.class, dataSource).select((String[]) null);
+		EntityService.of(User.class, dataSource).select((String[]) null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeC() {
 		String[] arg = new String[0];
-		EntitiesService.of(User.class, dataSource).select(arg);
+		EntityService.of(User.class, dataSource).select(arg);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeD() {
 		String[] arg = new String[]{"some", null};
-		EntitiesService.of(User.class, dataSource).select(arg);
+		EntityService.of(User.class, dataSource).select(arg);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeE() {
 		String[] arg = new String[]{"", "some"};
-		EntitiesService.of(User.class, dataSource).select(arg);
+		EntityService.of(User.class, dataSource).select(arg);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeF() {
 		String[] arg = new String[]{null, "some"};
-		EntitiesService.of(User.class, dataSource).select(arg);
+		EntityService.of(User.class, dataSource).select(arg);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeG() {
 		Set<String> fields = new HashSet<>();
-		EntitiesService.of(User.class, dataSource).select(fields);
+		EntityService.of(User.class, dataSource).select(fields);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeH() {
 		Set<String> fields = Collections.singleton(null);
-		EntitiesService.of(User.class, dataSource).select(fields);
+		EntityService.of(User.class, dataSource).select(fields);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeI() {
 		Set<String> fields = Collections.singleton("");
-		EntitiesService.of(User.class, dataSource).select(fields);
+		EntityService.of(User.class, dataSource).select(fields);
 	}
 
 	@Test
 	public void negativeJ1() {
-		User r = EntitiesService.of(User.class, dataSource).select("id").where(eq("id", 9999)).readSingle();
+		User r = EntityService.of(User.class, dataSource).select("id").where(eq("id", 9999)).readSingle();
 		Assert.assertNull(r);
 	}
 
@@ -349,10 +349,10 @@ public class SelectTest {
 		List<User> ul = new ArrayList<>();
 		ul.add(new User(7000L, 4, false, "Sam", "1", null));
 		ul.add(new User(7000L, 4, false, "Sam", "1", null));
-		int[] ir = EntitiesService.of(User.class, dataSource).insert(ul);
+		int[] ir = EntityService.of(User.class, dataSource).insert(ul);
 		Assert.assertTrue(IntStream.of(ir).allMatch(i -> i == 1));
 
-		EntitiesService.of(User.class, dataSource)
+		EntityService.of(User.class, dataSource)
 				.select("id")
 				.where(or(eq("ready", false), eq("ready", true), isNull("ready"), isNotNull("ready")))
 				.readSingle();
@@ -360,17 +360,17 @@ public class SelectTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeK1() {
-		EntitiesService.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(0);
+		EntityService.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(0);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeK2() {
-		EntitiesService.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(0, 1);
+		EntityService.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(0, 1);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeK3() {
-		EntitiesService.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(1, 0);
+		EntityService.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(1, 0);
 	}
 
 	@Entity

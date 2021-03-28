@@ -5,11 +5,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 class UpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
-	private final EntitiesService.ESConfig<T> config;
-	private final Map<String, Map.Entry<EntitiesService.FieldMetadata, Object>> updateSet = new LinkedHashMap<>();
+	private final EntityService.ESConfig<T> config;
+	private final Map<String, Map.Entry<EntityService.FieldMetadata, Object>> updateSet = new LinkedHashMap<>();
 	private final Map<String, String> literalsSet = new TreeMap<>();
 
-	UpdateImpl(EntitiesService.ESConfig<T> config) {
+	UpdateImpl(EntityService.ESConfig<T> config) {
 		this.config = config;
 	}
 
@@ -50,7 +50,7 @@ class UpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
 
 	private void buildUpdateSet(T input) {
 		try {
-			for (EntitiesService.FieldMetadata fm : config.em.byColumn.values()) {
+			for (EntityService.FieldMetadata fm : config.em.byColumn.values()) {
 				if (literalsSet.containsKey(fm.fieldMetadata.value())) {
 					continue;
 				}
@@ -82,8 +82,8 @@ class UpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
 
 		return config.preparedStatementAndDo(sql, s -> {
 			int i = 0;
-			for (Map.Entry<EntitiesService.FieldMetadata, Object> valueParam : updateSet.values()) {
-				EntitiesService.FieldMetadata fieldMetadata = valueParam.getKey();
+			for (Map.Entry<EntityService.FieldMetadata, Object> valueParam : updateSet.values()) {
+				EntityService.FieldMetadata fieldMetadata = valueParam.getKey();
 				Object value = valueParam.getValue();
 				i++;
 				if (fieldMetadata.jdbcConverter != null) {
@@ -101,7 +101,7 @@ class UpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
 			if (where != null) {
 				for (Where.WhereFieldValuePair parameter : parametersCollector) {
 					i++;
-					EntitiesService.FieldMetadata fm = config.em.byColumn.get(parameter.column);
+					EntityService.FieldMetadata fm = config.em.byColumn.get(parameter.column);
 					if (fm.jdbcConverter != null) {
 						fm.jdbcConverter.toDB(s, i, parameter.value);
 					} else {

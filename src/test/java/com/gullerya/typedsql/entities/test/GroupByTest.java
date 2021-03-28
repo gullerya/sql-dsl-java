@@ -4,7 +4,7 @@ import com.gullerya.typedsql.DBUtils;
 import com.gullerya.typedsql.configuration.DataSourceDetails;
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.configuration.DataSourceProviderSPI;
-import com.gullerya.typedsql.entities.EntitiesService;
+import com.gullerya.typedsql.entities.EntityService;
 import com.gullerya.typedsql.entities.EntityField;
 import com.gullerya.typedsql.entities.OrderBy;
 import org.junit.Assert;
@@ -29,7 +29,7 @@ public class GroupByTest {
 	};
 	private static final DataSourceDetails dsd = DataSourceProvider.getInstance(config).getDataSourceDetails();
 	private static final DataSource dataSource = dsd.getDataSource();
-	private final EntitiesService<Book> es = EntitiesService.of(Book.class, dataSource);
+	private final EntityService<Book> es = EntityService.of(Book.class, dataSource);
 
 	@BeforeClass
 	public static void prepare() throws Exception {

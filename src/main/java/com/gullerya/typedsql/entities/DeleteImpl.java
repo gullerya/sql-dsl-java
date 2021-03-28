@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 class DeleteImpl<T> implements Delete<T> {
-	private final EntitiesService.ESConfig<T> config;
+	private final EntityService.ESConfig<T> config;
 
-	DeleteImpl(EntitiesService.ESConfig<T> config) {
+	DeleteImpl(EntityService.ESConfig<T> config) {
 		this.config = config;
 	}
 
@@ -32,7 +32,7 @@ class DeleteImpl<T> implements Delete<T> {
 				int i = 0;
 				for (Where.WhereFieldValuePair parameter : parametersCollector) {
 					i++;
-					EntitiesService.FieldMetadata fm = config.em.byColumn.get(parameter.column);
+					EntityService.FieldMetadata fm = config.em.byColumn.get(parameter.column);
 					if (fm.jdbcConverter != null) {
 						fm.jdbcConverter.toDB(s, i, parameter.value);
 					} else {

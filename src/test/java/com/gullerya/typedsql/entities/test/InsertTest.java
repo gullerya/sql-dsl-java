@@ -1,7 +1,7 @@
 package com.gullerya.typedsql.entities.test;
 
 import com.gullerya.typedsql.configuration.DataSourceProvider;
-import com.gullerya.typedsql.entities.EntitiesService;
+import com.gullerya.typedsql.entities.EntityService;
 import com.gullerya.typedsql.entities.EntityField;
 import org.junit.Test;
 
@@ -17,19 +17,19 @@ public class InsertTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void negA() {
 		InsertTestEntity e = null;
-		EntitiesService.of(InsertTestEntity.class, ds).insert(e);
+		EntityService.of(InsertTestEntity.class, ds).insert(e);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negB() {
 		Collection<InsertTestEntity> ec = null;
-		EntitiesService.of(InsertTestEntity.class, ds).insert(ec);
+		EntityService.of(InsertTestEntity.class, ds).insert(ec);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negC() {
 		Collection<InsertTestEntity> ec = new ArrayList<>();
-		EntitiesService.of(InsertTestEntity.class, ds).insert(ec);
+		EntityService.of(InsertTestEntity.class, ds).insert(ec);
 	}
 
 	/**

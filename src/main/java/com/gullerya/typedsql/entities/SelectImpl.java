@@ -20,13 +20,13 @@ class SelectImpl<T> implements
 		Select.GroupByDownstream<T>,
 		Select.OrderByDownstream<T>,
 		SelectTermAction<T> {
-	private final EntitiesService.ESConfig<T> config;
+	private final EntityService.ESConfig<T> config;
 	private Set<String> selectedFields;
 	private Where.WhereClause where;
 	private Set<String> groupBy;
 	private Set<OrderBy.OrderByClause> orderBy;
 
-	SelectImpl(EntitiesService.ESConfig<T> config) {
+	SelectImpl(EntityService.ESConfig<T> config) {
 		this.config = config;
 	}
 
@@ -155,7 +155,7 @@ class SelectImpl<T> implements
 			int i = 0;
 			for (WhereFieldValuePair parameter : parametersCollector) {
 				i++;
-				EntitiesService.FieldMetadata fm = config.em.byColumn.get(parameter.column);
+				EntityService.FieldMetadata fm = config.em.byColumn.get(parameter.column);
 				if (fm.jdbcConverter != null) {
 					fm.jdbcConverter.toDB(s, i, parameter.value);
 				} else {
@@ -188,7 +188,7 @@ class SelectImpl<T> implements
 			while (rs.next()) {
 				T tmp = ctor.newInstance();
 				for (String f : selectedFields) {
-					EntitiesService.FieldMetadata fm = config.em.byColumn.get(f);
+					EntityService.FieldMetadata fm = config.em.byColumn.get(f);
 					String colName = fm.fieldMetadata.value();
 					Object dbValue;
 

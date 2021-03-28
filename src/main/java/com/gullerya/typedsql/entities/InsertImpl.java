@@ -4,9 +4,9 @@ import java.io.InputStream;
 import java.util.*;
 
 class InsertImpl<T> implements Insert<T> {
-	private final EntitiesService.ESConfig<T> config;
+	private final EntityService.ESConfig<T> config;
 
-	InsertImpl(EntitiesService.ESConfig<T> config) {
+	InsertImpl(EntityService.ESConfig<T> config) {
 		this.config = config;
 	}
 
@@ -16,12 +16,12 @@ class InsertImpl<T> implements Insert<T> {
 			throw new IllegalArgumentException("inserted entity MUST NOT be NULL");
 		}
 		Map<String, String> literalsMap = validateCollect(literals);
-		List<Map.Entry<EntitiesService.FieldMetadata, Object>> params = new ArrayList<>();
+		List<Map.Entry<EntityService.FieldMetadata, Object>> params = new ArrayList<>();
 		String sql = buildInsertSet(entity, literalsMap, params);
 		return config.preparedStatementAndDo(sql, s -> {
 			for (int i = 0; i < params.size(); i++) {
-				Map.Entry<EntitiesService.FieldMetadata, Object> paramValue = params.get(i);
-				EntitiesService.FieldMetadata fieldMetadata = paramValue.getKey();
+				Map.Entry<EntityService.FieldMetadata, Object> paramValue = params.get(i);
+				EntityService.FieldMetadata fieldMetadata = paramValue.getKey();
 				Object value = paramValue.getValue();
 				if (fieldMetadata.jdbcConverter != null) {
 					fieldMetadata.jdbcConverter.toDB(s, i + 1, value);
@@ -45,13 +45,13 @@ class InsertImpl<T> implements Insert<T> {
 			throw new IllegalArgumentException("entities list MUST NOT be NULL nor EMPTY");
 		}
 		Map<String, String> literalsMap = validateCollect(literals);
-		List<Map.Entry<EntitiesService.FieldMetadata, Object[]>> paramsSets = new ArrayList<>();
+		List<Map.Entry<EntityService.FieldMetadata, Object[]>> paramsSets = new ArrayList<>();
 		String sql = buildInsertSet(entities, literalsMap, paramsSets);
 		return config.preparedStatementAndDo(sql, s -> {
 			for (int ec = 0; ec < entities.size(); ec++) {
 				for (int fc = 0; fc < paramsSets.size(); fc++) {
-					Map.Entry<EntitiesService.FieldMetadata, Object[]> paramValue = paramsSets.get(fc);
-					EntitiesService.FieldMetadata fieldMetadata = paramValue.getKey();
+					Map.Entry<EntityService.FieldMetadata, Object[]> paramValue = paramsSets.get(fc);
+					EntityService.FieldMetadata fieldMetadata = paramValue.getKey();
 					Object value = paramValue.getValue()[ec];
 					if (fieldMetadata.jdbcConverter != null) {
 						fieldMetadata.jdbcConverter.toDB(s, fc + 1, value);
@@ -84,10 +84,10 @@ class InsertImpl<T> implements Insert<T> {
 		return result;
 	}
 
-	private String buildInsertSet(T entity, Map<String, String> literals, List<Map.Entry<EntitiesService.FieldMetadata, Object>> params) {
+	private String buildInsertSet(T entity, Map<String, String> literals, List<Map.Entry<EntityService.FieldMetadata, Object>> params) {
 		Set<String> nonNullSet = new LinkedHashSet<>();
 		try {
-			for (EntitiesService.FieldMetadata fm : config.em.byColumn.values()) {
+			for (EntityService.FieldMetadata fm : config.em.byColumn.values()) {
 				if (literals.containsKey(fm.fieldMetadata.value())) {
 					continue;
 				}
@@ -111,10 +111,10 @@ class InsertImpl<T> implements Insert<T> {
 		return "INSERT INTO " + config.em.fqSchemaTableName + " (" + fields + ")" + " VALUES (" + values + ")";
 	}
 
-	private String buildInsertSet(Collection<T> entities, Map<String, String> literals, List<Map.Entry<EntitiesService.FieldMetadata, Object[]>> params) {
-		Map<String, Map.Entry<EntitiesService.FieldMetadata, Object[]>> nonNullSet = new LinkedHashMap<>();
+	private String buildInsertSet(Collection<T> entities, Map<String, String> literals, List<Map.Entry<EntityService.FieldMetadata, Object[]>> params) {
+		Map<String, Map.Entry<EntityService.FieldMetadata, Object[]>> nonNullSet = new LinkedHashMap<>();
 		try {
-			for (EntitiesService.FieldMetadata fm : config.em.byColumn.values()) {
+			for (EntityService.FieldMetadata fm : config.em.byColumn.values()) {
 				if (literals.containsKey(fm.fieldMetadata.value())) {
 					continue;
 				}

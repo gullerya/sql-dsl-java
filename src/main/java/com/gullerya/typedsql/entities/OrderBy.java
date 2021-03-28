@@ -11,7 +11,7 @@ public interface OrderBy<DS> {
 	/**
 	 * clause validator
 	 */
-	static <T> void validate(EntitiesService.EntityMetadata<T> em, Set<String> groupByFields, Set<OrderByClause> orderByFields) {
+	static <T> void validate(EntityService.EntityMetadata<T> em, Set<String> groupByFields, Set<OrderByClause> orderByFields) {
 		for (OrderByClause obc : orderByFields) {
 			if (!em.byColumn.containsKey(obc.field)) {
 				throw new IllegalArgumentException("field '" + obc.field + "' not found in entity " + em.type + " definition");

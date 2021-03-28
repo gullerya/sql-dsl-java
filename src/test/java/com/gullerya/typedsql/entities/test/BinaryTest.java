@@ -4,7 +4,7 @@ import com.gullerya.typedsql.DBUtils;
 import com.gullerya.typedsql.configuration.DataSourceDetails;
 import com.gullerya.typedsql.configuration.DataSourceProvider;
 import com.gullerya.typedsql.configuration.DataSourceProviderSPI;
-import com.gullerya.typedsql.entities.EntitiesService;
+import com.gullerya.typedsql.entities.EntityService;
 import com.gullerya.typedsql.entities.EntityField;
 import com.gullerya.typedsql.entities.Where;
 import org.junit.Assert;
@@ -29,7 +29,7 @@ public class BinaryTest {
 	};
 	private static final DataSourceDetails dsd = DataSourceProvider.getInstance(config).getDataSourceDetails();
 	private static final DataSource dataSource = dsd.getDataSource();
-	private static final EntitiesService<BinaryContainer> binConService = EntitiesService.of(BinaryContainer.class, dataSource);
+	private static final EntityService<BinaryContainer> binConService = EntityService.of(BinaryContainer.class, dataSource);
 
 	@BeforeClass
 	public static void prepare() throws Exception {

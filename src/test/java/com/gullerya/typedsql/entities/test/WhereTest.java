@@ -1,7 +1,7 @@
 package com.gullerya.typedsql.entities.test;
 
 import com.gullerya.typedsql.configuration.DataSourceProvider;
-import com.gullerya.typedsql.entities.EntitiesService;
+import com.gullerya.typedsql.entities.EntityService;
 import com.gullerya.typedsql.entities.EntityField;
 import com.gullerya.typedsql.entities.Where;
 import org.junit.Test;
@@ -78,13 +78,13 @@ public class WhereTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeC4() {
-		EntitiesService.of(TestEnt.class, dataSource).select("some")
+		EntityService.of(TestEnt.class, dataSource).select("some")
 				.where(null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeC5() {
-		EntitiesService.of(TestEnt.class, dataSource).select("some")
+		EntityService.of(TestEnt.class, dataSource).select("some")
 				.where(Where.eq("none", 6));
 	}
 

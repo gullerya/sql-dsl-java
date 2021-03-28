@@ -7,7 +7,7 @@ public interface Having<DS> {
     /**
      * clause validator
      */
-    static <T> void validate(EntitiesService.EntityMetadata<T> em, String... fields) {
+    static <T> void validate(EntityService.EntityMetadata<T> em, String... fields) {
         if (fields == null || fields.length == 0) {
             throw new IllegalArgumentException("fields MUST NOT be NULL nor Empty");
         }

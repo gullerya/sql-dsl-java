@@ -16,15 +16,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class EntitiesService<T> implements Insert<T>, Select<T>, Update<T>, Delete<T> {
+public abstract class EntityService<T> implements Insert<T>, Select<T>, Update<T>, Delete<T> {
 	private final ESConfig<T> config;
 
-	private EntitiesService(Class<T> type, DataSource dataSource) throws ReflectiveOperationException {
+	private EntityService(Class<T> type, DataSource dataSource) throws ReflectiveOperationException {
 		EntityMetadata<T> em = EntityMetadata.of(type);
 		this.config = new ESConfig<>(dataSource, em);
 	}
 
-	public static <T> EntitiesService<T> of(Class<T> type, DataSource dataSource) {
+	public static <T> EntityService<T> of(Class<T> type, DataSource dataSource) {
 		if (type == null) {
 			throw new IllegalArgumentException("type MUST NOT be NULL");
 		}
@@ -32,14 +32,14 @@ public abstract class EntitiesService<T> implements Insert<T>, Select<T>, Update
 			throw new IllegalArgumentException("data source MUST NOT be NULL");
 		}
 		try {
-			return new EntitiesServiceImpl<>(type, dataSource);
+			return new EntityServiceImpl<>(type, dataSource);
 		} catch (ReflectiveOperationException roe) {
 			throw new IllegalStateException("failed to build entity metadata for " + type);
 		}
 	}
 
-	private static final class EntitiesServiceImpl<T> extends EntitiesService<T> {
-		private EntitiesServiceImpl(Class<T> type, DataSource ds) throws ReflectiveOperationException {
+	private static final class EntityServiceImpl<T> extends EntityService<T> {
+		private EntityServiceImpl(Class<T> type, DataSource ds) throws ReflectiveOperationException {
 			super(type, ds);
 		}
 

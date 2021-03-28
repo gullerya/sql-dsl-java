@@ -14,7 +14,7 @@ public interface Where<DS> {
 	/**
 	 * clause validator
 	 */
-	static <T> void validate(EntitiesService.EntityMetadata<T> em, WhereClause where) {
+	static <T> void validate(EntityService.EntityMetadata<T> em, WhereClause where) {
 		if (where == null) {
 			throw new IllegalArgumentException("where clause MUST NOT be NULL");
 		}

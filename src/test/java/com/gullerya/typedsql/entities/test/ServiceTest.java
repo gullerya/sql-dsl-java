@@ -1,7 +1,7 @@
 package com.gullerya.typedsql.entities.test;
 
 import com.gullerya.typedsql.configuration.DataSourceProvider;
-import com.gullerya.typedsql.entities.EntitiesService;
+import com.gullerya.typedsql.entities.EntityService;
 import com.gullerya.typedsql.entities.EntityField;
 import org.junit.Test;
 
@@ -14,47 +14,47 @@ public class ServiceTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negA() {
-		EntitiesService.of(null, null);
+		EntityService.of(null, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negB() {
-		EntitiesService.of(Object.class, null);
+		EntityService.of(Object.class, null);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negC() {
-		EntitiesService.of(Object.class, ds);
+		EntityService.of(Object.class, ds);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negD() {
-		EntitiesService.of(EntityInvalidNotPublic.class, ds);
+		EntityService.of(EntityInvalidNotPublic.class, ds);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negE() {
-		EntitiesService.of(EntityInvalidNoCtorA.class, ds);
+		EntityService.of(EntityInvalidNoCtorA.class, ds);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negF() {
-		EntitiesService.of(EntityInvalidNoCtorB.class, ds);
+		EntityService.of(EntityInvalidNoCtorB.class, ds);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negG() {
-		EntitiesService.of(EntityInvalidNoFields.class, ds);
+		EntityService.of(EntityInvalidNoFields.class, ds);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negH() {
-		EntitiesService.of(EntityInvalidFieldPrimitive.class, ds);
+		EntityService.of(EntityInvalidFieldPrimitive.class, ds);
 	}
 
 	@Test(expected = IllegalArgumentException.class)
 	public void negI() {
-		EntitiesService.of(EntityInvalidFieldNotPublic.class, ds);
+		EntityService.of(EntityInvalidFieldNotPublic.class, ds);
 	}
 
 	/**
