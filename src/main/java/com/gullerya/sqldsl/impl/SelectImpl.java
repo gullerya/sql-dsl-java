@@ -192,7 +192,7 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 				T tmp = ctor.newInstance();
 				for (String f : selectedFields) {
 					EntityFieldMetadata fm = config.em.byColumn.get(f);
-					String colName = fm.column.name();
+					String colName = fm.columnName;
 					Object dbValue;
 
 					if (fm.converter != null) {
@@ -202,6 +202,20 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 							dbValue = rs.getBytes(colName);
 						} else if (InputStream.class.isAssignableFrom(fm.field.getType())) {
 							dbValue = rs.getBinaryStream(colName);
+						} else if (boolean.class.isAssignableFrom(fm.field.getType())) {
+							dbValue = rs.getBoolean(colName);
+						} else if (byte.class.isAssignableFrom(fm.field.getType())) {
+							dbValue = rs.getByte(colName);
+						} else if (short.class.isAssignableFrom(fm.field.getType())) {
+							dbValue = rs.getShort(colName);
+						} else if (int.class.isAssignableFrom(fm.field.getType())) {
+							dbValue = rs.getInt(colName);
+						} else if (long.class.isAssignableFrom(fm.field.getType())) {
+							dbValue = rs.getLong(colName);
+						} else if (float.class.isAssignableFrom(fm.field.getType())) {
+							dbValue = rs.getFloat(colName);
+						} else if (double.class.isAssignableFrom(fm.field.getType())) {
+							dbValue = rs.getDouble(colName);
 						} else {
 							dbValue = rs.getObject(colName, fm.field.getType());
 						}

@@ -10,6 +10,7 @@ import javax.persistence.Convert;
 class EntityFieldMetadata {
 	final Field field;
 	final Column column;
+	final String columnName;
 	final AttributeConverter<Object, Object> converter;
 
 	EntityFieldMetadata(Field field, Column column) throws ReflectiveOperationException {
@@ -18,7 +19,16 @@ class EntityFieldMetadata {
 		}
 		this.field = field;
 		this.column = column;
+		this.columnName = obtainColumnName(field, column);
 		this.converter = obtainConverter(field);
+	}
+
+	private String obtainColumnName(Field field, Column column) {
+		String result = column.name();
+		if (result.isEmpty()) {
+			result = field.getName();
+		}
+		return result;
 	}
 
 	@SuppressWarnings("unchecked")

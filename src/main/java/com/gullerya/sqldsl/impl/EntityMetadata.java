@@ -37,19 +37,9 @@ public class EntityMetadata<ET> {
 		for (Field f : type.getDeclaredFields()) {
 			Column ef = f.getDeclaredAnnotation(Column.class);
 			if (ef != null) {
-				// if (f.getType().isPrimitive()) {
-				// throw new IllegalArgumentException("entity field MAY NOT be of a primitive
-				// type, '"
-				// + f.getName() + "' of " + type + " is not");
-				// }
-				String fName = f.getName();
-				String colName = ef.name();
-				if (colName.isEmpty()) {
-					colName = fName;
-				}
 				EntityFieldMetadata fm = new EntityFieldMetadata(f, ef);
-				tmpByField.put(fName, fm);
-				tmpByColumn.put(colName, fm);
+				tmpByField.put(f.getName(), fm);
+				tmpByColumn.put(fm.columnName, fm);
 			}
 		}
 		if (tmpByField.isEmpty()) {
