@@ -1,8 +1,10 @@
-package com.gullerya.sql;
+package com.gullerya.sqldsl.api.statements;
 
 import java.util.Collection;
 
-interface Insert<T> {
+import com.gullerya.sqldsl.Literal;
+
+public interface Insert<T> {
 
 	/**
 	 * insert a single entity

@@ -1,8 +1,8 @@
-package com.gullerya.sql;
+package com.gullerya.sqldsl.api.clauses;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
+
+import com.gullerya.sqldsl.EntityDAL;
 
 public interface OrderBy<DS> {
 
@@ -11,23 +11,26 @@ public interface OrderBy<DS> {
 	/**
 	 * clause validator
 	 */
-	static <T> void validate(EntityService.EntityMetadata<T> em, Set<String> groupByFields, Set<OrderByClause> orderByFields) {
-		for (OrderByClause obc : orderByFields) {
-			if (!em.byColumn.containsKey(obc.field)) {
-				throw new IllegalArgumentException("field '" + obc.field + "' not found in entity " + em.type + " definition");
-			}
-		}
-		if (groupByFields != null && !groupByFields.isEmpty()) {
-			List<String> ill = new ArrayList<>();
-			for (OrderByClause obc : orderByFields) {
-				if (!groupByFields.contains(obc.field)) {
-					ill.add(obc.field);
-				}
-			}
-			if (!ill.isEmpty()) {
-				throw new IllegalArgumentException("field/s [" + String.join(", ", ill) + "] is/are found in the ORDER BY clause, but NOT in the GROUP BY clause");
-			}
-		}
+	static <T> void validate(EntityDAL.EntityMetadata<T> em, Set<String> groupByFields,
+			Set<OrderByClause> orderByFields) {
+		// for (OrderByClause obc : orderByFields) {
+		// if (!em.byColumn.containsKey(obc.field)) {
+		// throw new IllegalArgumentException(
+		// "field '" + obc.field + "' not found in entity " + em.type + " definition");
+		// }
+		// }
+		// if (groupByFields != null && !groupByFields.isEmpty()) {
+		// List<String> ill = new ArrayList<>();
+		// for (OrderByClause obc : orderByFields) {
+		// if (!groupByFields.contains(obc.field)) {
+		// ill.add(obc.field);
+		// }
+		// }
+		// if (!ill.isEmpty()) {
+		// throw new IllegalArgumentException("field/s [" + String.join(", ", ill)
+		// + "] is/are found in the ORDER BY clause, but NOT in the GROUP BY clause");
+		// }
+		// }
 	}
 
 	/**

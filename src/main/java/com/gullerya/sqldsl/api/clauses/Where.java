@@ -1,4 +1,4 @@
-package com.gullerya.sql;
+package com.gullerya.sqldsl.api.clauses;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.gullerya.sqldsl.EntityDAL;
+
 public interface Where<DS> {
 
 	DS where(WhereClause where);
@@ -14,16 +16,17 @@ public interface Where<DS> {
 	/**
 	 * clause validator
 	 */
-	static <T> void validate(EntityService.EntityMetadata<T> em, WhereClause where) {
-		if (where == null) {
-			throw new IllegalArgumentException("where clause MUST NOT be NULL");
-		}
-		Collection<String> fields = where.collectFields();
-		for (String f : fields) {
-			if (!em.byColumn.containsKey(f)) {
-				throw new IllegalArgumentException("field '" + f + "' not found in entity " + em.type + " definition");
-			}
-		}
+	static <T> void validate(EntityDAL.EntityMetadata<T> em, WhereClause where) {
+		// if (where == null) {
+		// throw new IllegalArgumentException("where clause MUST NOT be NULL");
+		// }
+		// Collection<String> fields = where.collectFields();
+		// for (String f : fields) {
+		// if (!em.byColumn.containsKey(f)) {
+		// throw new IllegalArgumentException("field '" + f + "' not found in entity " +
+		// em.type + " definition");
+		// }
+		// }
 	}
 
 	final class WhereFieldValuePair {
@@ -126,14 +129,15 @@ public interface Where<DS> {
 				throw new IllegalArgumentException("field MUST NOT be NULL nor EMPTY");
 			}
 			if (value == null) {
-				throw new IllegalArgumentException("value MUST NOT be NULL (for NULL conditions use 'isNull' and 'isNotNull')");
+				throw new IllegalArgumentException(
+						"value MUST NOT be NULL (for NULL conditions use 'isNull' and 'isNotNull')");
 			}
 			this.column = column;
 			this.value = value;
 			this.operator = operator;
 		}
 
-		//  for extension use only
+		// for extension use only
 		private WhereClause(String column) {
 			if (column == null || column.isEmpty()) {
 				throw new IllegalArgumentException("field MUST NOT be NULL nor EMPTY");
@@ -143,7 +147,7 @@ public interface Where<DS> {
 			this.operator = null;
 		}
 
-		//  for extension use only
+		// for extension use only
 		private WhereClause() {
 			this.column = null;
 			this.value = null;
@@ -183,7 +187,8 @@ public interface Where<DS> {
 
 			@Override
 			String stringify(Collection<WhereFieldValuePair> parametersCollection) {
-				return "(" + clauses.stream().map(c -> c.stringify(parametersCollection)).collect(Collectors.joining(" " + operator + " ")) + ")";
+				return "(" + clauses.stream().map(c -> c.stringify(parametersCollection))
+						.collect(Collectors.joining(" " + operator + " ")) + ")";
 			}
 
 			@Override

@@ -1,6 +1,8 @@
-package com.gullerya.sqldsl;
+package com.gullerya.sqldsl.api.statements;
 
-interface Delete<T> {
+import com.gullerya.sqldsl.api.clauses.Where;
+
+public interface Delete<T> {
 
 	/**
 	 * delete all records of the entity T

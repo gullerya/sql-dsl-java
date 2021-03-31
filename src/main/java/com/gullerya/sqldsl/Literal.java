@@ -1,4 +1,4 @@
-package com.gullerya.sql;
+package com.gullerya.sqldsl;
 
 public abstract class Literal {
 	final String field;

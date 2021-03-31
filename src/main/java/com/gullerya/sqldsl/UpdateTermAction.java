@@ -1,4 +1,4 @@
-package com.gullerya.sql;
+package com.gullerya.sqldsl;
 
 public interface UpdateTermAction {
 

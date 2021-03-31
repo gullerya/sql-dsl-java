@@ -4,31 +4,62 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import javax.persistence.Converter;
+import java.util.Map;
+import java.util.HashMap;
 
-import com.gullerya.sql._configuration.DataSourceDetails;
+import javax.sql.DataSource;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 public class DBUtils {
-	private static volatile boolean schemaInPlace = false;
+	private static final Object DATASOURCE_LOCK = new Object();
+	private static final Object SCHEMA_LOCK = new Object();
 
+	private static DataSource dataSource;
+	private static final Map<String, Boolean> schemas = new HashMap<>();
 
-	@Converter
+	public static final String DEFAULT_TESTS_SCHEMA = "DalTests";
 
-	public static final String DAL_TESTS_SCHEMA = "DalTests";
+	public static DataSource getDataSource() {
+		return getDataSource(DEFAULT_TESTS_SCHEMA);
+	}
 
-	synchronized public static void ensureSchema(DataSourceDetails dsd) {
-		if (!schemaInPlace) {
-			if (dsd == null) {
-				throw new IllegalArgumentException("data source details MUST NOT be NULL");
-			}
-			try (Connection c = dsd.getDataSource().getConnection(); Statement s = c.createStatement()) {
-				System.out.println("preparing schema " + DAL_TESTS_SCHEMA + "...");
-				s.execute("CREATE SCHEMA IF NOT EXISTS \"" + DAL_TESTS_SCHEMA + "\"");
-				schemaInPlace = true;
-				System.out.println("... schema " + DAL_TESTS_SCHEMA + " is ready");
-			} catch (SQLException sqle) {
-				throw new IllegalStateException("failed to prepare DB", sqle);
+	public static DataSource getDataSource(String schema) {
+		if (schema == null || schema.isEmpty()) {
+			throw new IllegalArgumentException("schema parameter MUST NOT be NULL nor empty");
+		}
+
+		DataSource result = DBUtils.ensureDataSource();
+		if (!schemas.containsKey(schema)) {
+			synchronized (SCHEMA_LOCK) {
+				if (!schemas.containsKey(schema)) {
+					try (Connection c = result.getConnection(); Statement s = c.createStatement()) {
+						System.out.println("preparing schema " + schema + "...");
+						s.execute("CREATE SCHEMA \"" + schema + "\"");
+						schemas.put(schema, true);
+						System.out.println("... schema " + schema + " is ready");
+					} catch (SQLException sqle) {
+						throw new IllegalStateException("failed to create scheme '" + schema + "'", sqle);
+					}
+				}
 			}
 		}
+		return result;
+	}
+
+	private static DataSource ensureDataSource() {
+
+		if (dataSource == null) {
+			synchronized (DATASOURCE_LOCK) {
+				if (dataSource == null) {
+					HikariConfig config = new HikariConfig();
+					config.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
+					config.setJdbcUrl("jdbc:derby:memory:TestsDB;create=true");
+					dataSource = new HikariDataSource(config);
+				}
+			}
+		}
+		return dataSource;
 	}
 }
