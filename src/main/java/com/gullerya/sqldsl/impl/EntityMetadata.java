@@ -44,7 +44,7 @@ public class EntityMetadata<ET> {
 				// }
 				String fName = f.getName();
 				String colName = ef.name();
-				if (colName == null || colName.isEmpty()) {
+				if (colName.isEmpty()) {
 					colName = fName;
 				}
 				EntityFieldMetadata fm = new EntityFieldMetadata(f, ef);

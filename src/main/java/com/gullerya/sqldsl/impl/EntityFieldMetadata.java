@@ -26,15 +26,11 @@ class EntityFieldMetadata {
 		AttributeConverter<Object, Object> result = null;
 		Convert convert = field.getAnnotation(Convert.class);
 		if (convert != null && !convert.disableConversion()) {
-			Class<?> converterClass = convert.converter();
-			if (converterClass == null) {
-				throw new IllegalStateException("enabled converter MUST specify non-NULL converter");
-			}
+			Class<AttributeConverter<Object, Object>> converterClass = convert.converter();
 			if (!AttributeConverter.class.isAssignableFrom(converterClass)) {
 				throw new IllegalStateException("converter MUST be a subclass of AttributeConverter");
 			}
-			result = ((Class<AttributeConverter<Object, Object>>) converterClass).getDeclaredConstructor()
-					.newInstance();
+			result = converterClass.getDeclaredConstructor().newInstance();
 		}
 		return result;
 	}

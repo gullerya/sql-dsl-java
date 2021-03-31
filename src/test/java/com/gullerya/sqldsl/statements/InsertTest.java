@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.sql.DataSource;
-import javax.xml.transform.stax.StAXResult;
 
 import com.gullerya.sqldsl.DBUtils;
 import com.gullerya.sqldsl.EntityDAL;
@@ -18,7 +17,7 @@ import org.junit.Test;
 public class InsertTest {
 	private static final String SCHEMA = "InsertTestsSchema";
 	private static final String TEST_PRIVATE_TABLE = "TestPrivate";
-	private static DataSource dataSource = DBUtils.getDataSource(SCHEMA);
+	private static final DataSource dataSource = DBUtils.getDataSource(SCHEMA);
 
 	@BeforeClass
 	static public void before() throws SQLException {

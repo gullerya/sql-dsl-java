@@ -23,11 +23,11 @@ public interface EntityDAL<ET> extends Delete<ET>, Insert<ET>, Select<ET>, Updat
 	 * 
 	 * @param <ET>       Entity class/type will define all the relevant setup via
 	 *                   JPA annotations
-	 * @param entityType
+	 * @param entityType Entity class (see ET above)
 	 * @param dataSource DataSource parameter to access the DB
 	 * @return DAL instance
 	 */
-	public static <ET> EntityDAL<ET> of(Class<ET> entityType, DataSource dataSource) {
+	static <ET> EntityDAL<ET> of(Class<ET> entityType, DataSource dataSource) {
 		if (entityType == null) {
 			throw new IllegalArgumentException("entity type MUST NOT be NULL");
 		}
