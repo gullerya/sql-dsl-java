@@ -32,7 +32,7 @@ public class EntityMetadata<ET> {
 			fqSchemaTableName = "\"" + tmpName + "\"";
 		}
 
-		Map<String, EntityFieldMetadata> tmpByFName = new HashMap<>();
+		Map<String, EntityFieldMetadata> tmpByField = new HashMap<>();
 		Map<String, EntityFieldMetadata> tmpByColumn = new HashMap<>();
 		for (Field f : type.getDeclaredFields()) {
 			Column ef = f.getDeclaredAnnotation(Column.class);
@@ -42,16 +42,21 @@ public class EntityMetadata<ET> {
 				// type, '"
 				// + f.getName() + "' of " + type + " is not");
 				// }
+				String fName = f.getName();
+				String colName = ef.name();
+				if (colName == null || colName.isEmpty()) {
+					colName = fName;
+				}
 				EntityFieldMetadata fm = new EntityFieldMetadata(f, ef);
-				tmpByFName.put(f.getName(), fm);
-				tmpByColumn.put(ef.name(), fm);
+				tmpByField.put(fName, fm);
+				tmpByColumn.put(colName, fm);
 			}
 		}
-		if (tmpByFName.isEmpty()) {
+		if (tmpByField.isEmpty()) {
 			throw new IllegalArgumentException(
 					"type " + type + " MUST have at least 1 fields annotated with " + Column.class);
 		}
-		byFName = tmpByFName.entrySet().stream().sorted(Map.Entry.comparingByKey())
+		byFName = tmpByField.entrySet().stream().sorted(Map.Entry.comparingByKey())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 		byColumn = tmpByColumn.entrySet().stream().sorted(Map.Entry.comparingByKey())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));

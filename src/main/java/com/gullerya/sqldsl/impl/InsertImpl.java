@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.statements.Insert;
@@ -99,8 +100,10 @@ public class InsertImpl<T> implements Insert<T> {
 	private String buildInsertSet(T entity, Map<String, String> literals, List<Map.Entry<EntityFieldMetadata, Object>> params) {
 		Set<String> nonNullSet = new LinkedHashSet<>();
 		try {
-			for (EntityFieldMetadata fm : config.em.byColumn.values()) {
-				if (literals.containsKey(fm.column.name())) {
+			for (Entry<String, EntityFieldMetadata> e : config.em.byColumn.entrySet()) {
+				String cName = e.getKey();
+				EntityFieldMetadata fm = e.getValue();
+				if (literals.containsKey(cName)) {
 					continue;
 				}
 				Object fv = fm.field.get(entity);
@@ -108,7 +111,7 @@ public class InsertImpl<T> implements Insert<T> {
 					fv = fm.converter.convertToDatabaseColumn(fv);
 				}
 				if (fv != null) {
-					nonNullSet.add(fm.column.name());
+					nonNullSet.add(cName);
 					params.add(new AbstractMap.SimpleEntry<>(fm, fv));
 				}
 			}

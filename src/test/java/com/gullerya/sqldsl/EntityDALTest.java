@@ -16,8 +16,9 @@ public class EntityDALTest {
 	@Test
 	public void testA() {
 		EntityDAL<TestEntityA> usersDal = EntityDAL.of(TestEntityA.class, dataSource);
-
 	}
+
+	// TODO: add more tests, negative etc
 
 	@Entity
 	@Table(name = "", schema = SCHEMA)
