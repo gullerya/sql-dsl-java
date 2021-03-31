@@ -30,7 +30,7 @@ public class DeleteImpl<ET> implements Delete<ET> {
 		if (where != null) {
 			sql += " WHERE " + where.stringify(parametersCollector);
 		}
-		return config.preparedStatementAndDo(sql, s -> {
+		return config.prepareStatementAndDo(sql, s -> {
 			if (where != null) {
 				int i = 0;
 				for (Where.WhereFieldValuePair parameter : parametersCollector) {

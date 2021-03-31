@@ -30,7 +30,7 @@ public class InsertImpl<T> implements Insert<T> {
 		Map<String, String> literalsMap = validateCollect(literals);
 		List<Map.Entry<EntityFieldMetadata, Object>> params = new ArrayList<>();
 		String sql = buildInsertSet(entity, literalsMap, params);
-		return config.preparedStatementAndDo(sql, s -> {
+		return config.prepareStatementAndDo(sql, s -> {
 			for (int i = 0; i < params.size(); i++) {
 				Map.Entry<EntityFieldMetadata, Object> paramValue = params.get(i);
 				EntityFieldMetadata fieldMetadata = paramValue.getKey();
@@ -59,7 +59,7 @@ public class InsertImpl<T> implements Insert<T> {
 		Map<String, String> literalsMap = validateCollect(literals);
 		List<Map.Entry<EntityFieldMetadata, Object[]>> paramsSets = new ArrayList<>();
 		String sql = buildInsertSet(entities, literalsMap, paramsSets);
-		return config.preparedStatementAndDo(sql, s -> {
+		return config.prepareStatementAndDo(sql, s -> {
 			for (int ec = 0; ec < entities.size(); ec++) {
 				for (int fc = 0; fc < paramsSets.size(); fc++) {
 					Map.Entry<EntityFieldMetadata, Object[]> paramValue = paramsSets.get(fc);

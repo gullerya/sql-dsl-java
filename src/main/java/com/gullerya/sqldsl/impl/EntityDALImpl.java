@@ -16,7 +16,7 @@ public class EntityDALImpl<ET> implements EntityDAL<ET> {
 	private final ESConfig<ET> config;
 
 	public EntityDALImpl(Class<ET> entityType, DataSource ds) throws ReflectiveOperationException {
-		EntityMetadata<ET> em = new EntityMetadata(entityType);
+		EntityMetadata<ET> em = new EntityMetadata<>(entityType);
 		this.config = new ESConfig<>(ds, em);
 	}
 
@@ -27,32 +27,27 @@ public class EntityDALImpl<ET> implements EntityDAL<ET> {
 
 	@Override
 	public int delete(Where.WhereClause whereClause) {
-		// return new DeleteImpl<>(config).delete(whereClause);
-		return 0;
+		return new DeleteImpl<>(config).delete(whereClause);
 	}
 
 	@Override
 	public boolean insert(ET entity, Literal... literals) {
-		// return new InsertImpl<>(config).insert(entity, literals);
-		return false;
+		return new InsertImpl<>(config).insert(entity, literals);
 	}
 
 	@Override
 	public int[] insert(Collection<ET> entities, Literal... literals) {
-		// return new InsertImpl<>(config).insert(entities, literals);
-		return null;
+		return new InsertImpl<>(config).insert(entities, literals);
 	}
 
 	@Override
 	public SelectDownstream<ET> select(String... fields) {
-		// return new SelectImpl<>(config).select(fields);
-		return null;
+		return new SelectImpl<>(config).select(fields);
 	}
 
 	@Override
 	public SelectDownstream<ET> select(Set<String> fields) {
-		// return new SelectImpl<>(config).select(fields);
-		return null;
+		return new SelectImpl<>(config).select(fields);
 	}
 
 	@Override
@@ -70,7 +65,7 @@ public class EntityDALImpl<ET> implements EntityDAL<ET> {
 			this.em = em;
 		}
 
-		<R> R preparedStatementAndDo(String sql, PreparedStatementAction<R> psAction) {
+		<R> R prepareStatementAndDo(String sql, PreparedStatementAction<R> psAction) {
 			try (Connection c = ds.getConnection(); PreparedStatement s = c.prepareStatement(sql)) {
 				return psAction.execute(s);
 			} catch (SQLException sqle) {
