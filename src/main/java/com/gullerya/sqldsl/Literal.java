@@ -1,8 +1,8 @@
 package com.gullerya.sqldsl;
 
 public abstract class Literal {
-	final String field;
-	final String value;
+	public final String field;
+	public final String value;
 
 	private Literal(String field, String value) {
 		if (field == null || field.isEmpty()) {

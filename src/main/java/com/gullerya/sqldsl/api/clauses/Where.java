@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.gullerya.sqldsl.EntityDAL;
+import com.gullerya.sqldsl.impl.EntityMetadata;
 
 public interface Where<DS> {
 
@@ -16,7 +16,7 @@ public interface Where<DS> {
 	/**
 	 * clause validator
 	 */
-	static <T> void validate(EntityDAL.EntityMetadata<T> em, WhereClause where) {
+	static <T> void validate(EntityMetadata<T> em, WhereClause where) {
 		// if (where == null) {
 		// throw new IllegalArgumentException("where clause MUST NOT be NULL");
 		// }
@@ -158,7 +158,7 @@ public interface Where<DS> {
 			return collectFields(new ArrayList<>());
 		}
 
-		String stringify(Collection<WhereFieldValuePair> parametersCollection) {
+		public String stringify(Collection<WhereFieldValuePair> parametersCollection) {
 			parametersCollection.add(new WhereFieldValuePair(this.column, this.value));
 			return column + " " + operator + " ?";
 		}
@@ -186,7 +186,7 @@ public interface Where<DS> {
 			}
 
 			@Override
-			String stringify(Collection<WhereFieldValuePair> parametersCollection) {
+			public String stringify(Collection<WhereFieldValuePair> parametersCollection) {
 				return "(" + clauses.stream().map(c -> c.stringify(parametersCollection))
 						.collect(Collectors.joining(" " + operator + " ")) + ")";
 			}
@@ -214,7 +214,7 @@ public interface Where<DS> {
 			}
 
 			@Override
-			String stringify(Collection<WhereFieldValuePair> parametersCollection) {
+			public String stringify(Collection<WhereFieldValuePair> parametersCollection) {
 				return "NOT " + operand.stringify(parametersCollection);
 			}
 
@@ -233,7 +233,7 @@ public interface Where<DS> {
 			}
 
 			@Override
-			String stringify(Collection<WhereFieldValuePair> parametersCollection) {
+			public String stringify(Collection<WhereFieldValuePair> parametersCollection) {
 				return super.column + " IS NULL";
 			}
 		}
@@ -247,7 +247,7 @@ public interface Where<DS> {
 			}
 
 			@Override
-			String stringify(Collection<WhereFieldValuePair> parametersCollection) {
+			public String stringify(Collection<WhereFieldValuePair> parametersCollection) {
 				return super.column + " IS NOT NULL";
 			}
 		}
@@ -275,7 +275,7 @@ public interface Where<DS> {
 			}
 
 			@Override
-			String stringify(Collection<WhereFieldValuePair> parametersCollection) {
+			public String stringify(Collection<WhereFieldValuePair> parametersCollection) {
 				for (Object value : values) {
 					parametersCollection.add(new WhereFieldValuePair(super.column, value));
 				}
@@ -303,7 +303,7 @@ public interface Where<DS> {
 			}
 
 			@Override
-			String stringify(Collection<WhereFieldValuePair> parametersCollection) {
+			public String stringify(Collection<WhereFieldValuePair> parametersCollection) {
 				parametersCollection.add(new WhereFieldValuePair(super.column, from));
 				parametersCollection.add(new WhereFieldValuePair(super.column, to));
 				return super.column + " BETWEEN ? AND ?";

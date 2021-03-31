@@ -2,7 +2,7 @@ package com.gullerya.sqldsl.api.clauses;
 
 import java.util.Set;
 
-import com.gullerya.sqldsl.EntityDAL;
+import com.gullerya.sqldsl.impl.EntityMetadata;
 
 public interface GroupBy<DS> {
 
@@ -11,7 +11,7 @@ public interface GroupBy<DS> {
 	/**
 	 * clause validator
 	 */
-	static <T> void validate(EntityDAL.EntityMetadata<T> em, Set<String> selectedFields, Set<String> groupByFields) {
+	static <T> void validate(EntityMetadata<T> em, Set<String> selectedFields, Set<String> groupByFields) {
 		// for (String f : groupByFields) {
 		// if (!em.byColumn.containsKey(f)) {
 		// throw new IllegalArgumentException("field '" + f + "' not found in entity " +
