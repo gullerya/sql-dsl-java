@@ -198,30 +198,30 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 					if (fm.converter != null) {
 						dbValue = fm.converter.convertToEntityAttribute(rs.getObject(colName));
 					} else {
-						if (fm.field.getType().isArray()) {
+						if (fm.fieldType.isArray()) {
 							dbValue = rs.getBytes(colName);
-						} else if (InputStream.class.isAssignableFrom(fm.field.getType())) {
+						} else if (InputStream.class.isAssignableFrom(fm.fieldType)) {
 							dbValue = rs.getBinaryStream(colName);
-						} else if (boolean.class.isAssignableFrom(fm.field.getType())) {
+						} else if (boolean.class.isAssignableFrom(fm.fieldType)) {
 							dbValue = rs.getBoolean(colName);
-						} else if (byte.class.isAssignableFrom(fm.field.getType())) {
+						} else if (byte.class.isAssignableFrom(fm.fieldType)) {
 							dbValue = rs.getByte(colName);
-						} else if (short.class.isAssignableFrom(fm.field.getType())) {
+						} else if (short.class.isAssignableFrom(fm.fieldType)) {
 							dbValue = rs.getShort(colName);
-						} else if (int.class.isAssignableFrom(fm.field.getType())) {
+						} else if (int.class.isAssignableFrom(fm.fieldType)) {
 							dbValue = rs.getInt(colName);
-						} else if (long.class.isAssignableFrom(fm.field.getType())) {
+						} else if (long.class.isAssignableFrom(fm.fieldType)) {
 							dbValue = rs.getLong(colName);
-						} else if (float.class.isAssignableFrom(fm.field.getType())) {
+						} else if (float.class.isAssignableFrom(fm.fieldType)) {
 							dbValue = rs.getFloat(colName);
-						} else if (double.class.isAssignableFrom(fm.field.getType())) {
+						} else if (double.class.isAssignableFrom(fm.fieldType)) {
 							dbValue = rs.getDouble(colName);
 						} else {
-							dbValue = rs.getObject(colName, fm.field.getType());
+							dbValue = rs.getObject(colName, fm.fieldType);
 						}
 					}
 
-					fm.field.set(tmp, dbValue);
+					fm.setFieldValue(tmp, dbValue);
 				}
 				result.add(tmp);
 			}

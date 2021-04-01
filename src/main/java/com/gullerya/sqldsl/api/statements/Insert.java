@@ -13,9 +13,9 @@ public interface Insert<T> {
 	 *
 	 * @param entity   entity; MUST NOT be NULL
 	 * @param literals literal values will override the corresponding field values in the entity
-	 * @return true if the operation resulted in 1 affected row count, otherwise false
+	 * @return insert result
 	 */
-	boolean insert(T entity, Literal... literals);
+	int insert(T entity, Literal... literals);
 
 	/**
 	 * insert a collection of entities

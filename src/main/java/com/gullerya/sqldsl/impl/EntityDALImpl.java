@@ -31,7 +31,7 @@ public class EntityDALImpl<ET> implements EntityDAL<ET> {
 	}
 
 	@Override
-	public boolean insert(ET entity, Literal... literals) {
+	public int insert(ET entity, Literal... literals) {
 		return new InsertImpl<>(config).insert(entity, literals);
 	}
 

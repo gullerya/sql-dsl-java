@@ -8,19 +8,41 @@ import javax.persistence.Column;
 import javax.persistence.Convert;
 
 class EntityFieldMetadata {
-	final Field field;
-	final Column column;
+	final Class<?> fieldType;
+	private final Field field;
+
 	final String columnName;
-	final AttributeConverter<Object, Object> converter;
+	final Column column;
+
+	private final AttributeConverter<Object, Object> converter;
 
 	EntityFieldMetadata(Field field, Column column) throws ReflectiveOperationException {
 		if (!Modifier.isPublic(field.getModifiers())) {
 			field.setAccessible(true);
 		}
-		this.field = field;
-		this.column = column;
+		this.fieldType = field.getType();
+
 		this.columnName = obtainColumnName(field, column);
+		this.column = column;
+
+		this.field = field;
 		this.converter = obtainConverter(field);
+	}
+
+	Object getFieldValue(Object entity) {
+		try {
+			return this.field.get(entity);
+		} catch (ReflectiveOperationException roe) {
+			throw new IllegalStateException("failed to get field value from entity", roe);
+		}
+	}
+
+	void setFieldValue(Object entity, Object value) {
+		try {
+			this.field.set(entity, value);
+		} catch (ReflectiveOperationException roe) {
+			throw new IllegalStateException("failed to set field value on entity", roe);
+		}
 	}
 
 	private String obtainColumnName(Field field, Column column) {

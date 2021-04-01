@@ -24,7 +24,7 @@ public class InsertImpl<T> implements Insert<T> {
 	}
 
 	@Override
-	public boolean insert(T entity, Literal... literals) {
+	public int insert(T entity, Literal... literals) {
 		if (entity == null) {
 			throw new IllegalArgumentException("inserted entity MUST NOT be NULL");
 		}
@@ -48,7 +48,7 @@ public class InsertImpl<T> implements Insert<T> {
 					}
 				}
 			}
-			return s.executeUpdate() == 1;
+			return s.executeUpdate();
 		});
 	}
 
@@ -106,7 +106,7 @@ public class InsertImpl<T> implements Insert<T> {
 				if (literals.containsKey(cName)) {
 					continue;
 				}
-				Object fv = fm.field.get(entity);
+				Object fv = fm.getFieldValue(entity);
 				if (fm.converter != null) {
 					fv = fm.converter.convertToDatabaseColumn(fv);
 				}
@@ -132,18 +132,18 @@ public class InsertImpl<T> implements Insert<T> {
 		Map<String, Map.Entry<EntityFieldMetadata, Object[]>> nonNullSet = new LinkedHashMap<>();
 		try {
 			for (EntityFieldMetadata fm : config.em.byColumn.values()) {
-				if (literals.containsKey(fm.column.name())) {
+				if (literals.containsKey(fm.columnName)) {
 					continue;
 				}
 				int i = 0;
 				for (T entity : entities) {
-					Object fv = fm.field.get(entity);
+					Object fv = fm.getFieldValue(entity);
 					if (fm.converter != null) {
 						fv = fm.converter.convertToDatabaseColumn(fv);
 					}
 					if (fv != null) {
 						nonNullSet
-								.computeIfAbsent(fm.column.name(), c -> new AbstractMap.SimpleEntry<>(fm, new Object[entities.size()]))
+								.computeIfAbsent(fm.columnName, c -> new AbstractMap.SimpleEntry<>(fm, new Object[entities.size()]))
 								.getValue()[i] = fv;
 					}
 					i++;
