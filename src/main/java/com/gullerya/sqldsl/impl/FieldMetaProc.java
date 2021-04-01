@@ -3,9 +3,13 @@ package com.gullerya.sqldsl.impl;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Optional;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Column;
@@ -52,7 +56,16 @@ class FieldMetaProc {
 	Object getColumnValue(ResultSet rs, String columnName) throws SQLException {
 		Object result;
 		if (converter != null) {
-			result = converter.convertToEntityAttribute(rs.getObject(columnName));
+			Optional<ParameterizedType> pt = Arrays.stream(converter.getClass().getGenericInterfaces())
+					.filter(i -> i instanceof ParameterizedType)
+					.map(i -> (ParameterizedType) i)
+					.filter(i -> i.getRawType().getTypeName().startsWith(AttributeConverter.class.getTypeName()))
+					.findFirst();
+			if (pt.isPresent()) {
+				result = converter.convertToEntityAttribute(rs.getObject(columnName, (Class<?>) pt.get().getActualTypeArguments()[0]));
+			} else {
+				result = converter.convertToEntityAttribute(rs.getObject(columnName));
+			}
 		} else {
 			if (fieldType.isArray()) {
 				result = rs.getBytes(columnName);

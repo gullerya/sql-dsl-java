@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class EntityDALTest {
 	private static final String SCHEMA = "EntityDalTestsSchema";
-	private DataSource dataSource = DBUtils.getDataSource(SCHEMA);
+	private static final DataSource dataSource = DBUtils.getDataSource(SCHEMA);
 
 	@Test
 	public void testA() {
