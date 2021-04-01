@@ -19,4 +19,4 @@ jobs:
         run: mvn spotbugs:check
 
       - name: Test
-        run: mvn --batch-mode --update-snapshots verify -Pcoverage
+        run: mvn --batch-mode --update-snapshots verify -DskipTests=false -Pcoverage
