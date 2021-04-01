@@ -15,5 +15,8 @@ jobs:
         with:
           java-version: 11
 
-      - name: Verify
-        run: mvn --batch-mode --update-snapshots verify
+      - name: Lint
+        run: mvn spotbugs:check
+
+      - name: Test
+        run: mvn --batch-mode --update-snapshots verify -Pcoverage
