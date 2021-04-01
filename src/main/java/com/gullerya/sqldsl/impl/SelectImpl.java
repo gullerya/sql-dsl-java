@@ -5,7 +5,6 @@ import com.gullerya.sqldsl.api.clauses.OrderBy;
 import com.gullerya.sqldsl.api.clauses.Where;
 import com.gullerya.sqldsl.api.statements.Select;
 
-import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -157,11 +156,8 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 			int i = 0;
 			for (WhereFieldValuePair parameter : parametersCollector) {
 				i++;
-				EntityFieldMetadata fm = config.em.byColumn.get(parameter.column);
-				Object pv = parameter.value;
-				if (fm.converter != null) {
-					pv = fm.converter.convertToDatabaseColumn(pv);
-				}
+				FieldMetaProc fm = config.em.byColumn.get(parameter.column);
+				Object pv = fm.translateFieldToColumn(parameter.value);
 				s.setObject(i, pv);
 			}
 			try (ResultSet rs = s.executeQuery()) {
@@ -191,36 +187,9 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 			while (rs.next()) {
 				T tmp = ctor.newInstance();
 				for (String f : selectedFields) {
-					EntityFieldMetadata fm = config.em.byColumn.get(f);
+					FieldMetaProc fm = config.em.byColumn.get(f);
 					String colName = fm.columnName;
-					Object dbValue;
-
-					if (fm.converter != null) {
-						dbValue = fm.converter.convertToEntityAttribute(rs.getObject(colName));
-					} else {
-						if (fm.fieldType.isArray()) {
-							dbValue = rs.getBytes(colName);
-						} else if (InputStream.class.isAssignableFrom(fm.fieldType)) {
-							dbValue = rs.getBinaryStream(colName);
-						} else if (boolean.class.isAssignableFrom(fm.fieldType)) {
-							dbValue = rs.getBoolean(colName);
-						} else if (byte.class.isAssignableFrom(fm.fieldType)) {
-							dbValue = rs.getByte(colName);
-						} else if (short.class.isAssignableFrom(fm.fieldType)) {
-							dbValue = rs.getShort(colName);
-						} else if (int.class.isAssignableFrom(fm.fieldType)) {
-							dbValue = rs.getInt(colName);
-						} else if (long.class.isAssignableFrom(fm.fieldType)) {
-							dbValue = rs.getLong(colName);
-						} else if (float.class.isAssignableFrom(fm.fieldType)) {
-							dbValue = rs.getFloat(colName);
-						} else if (double.class.isAssignableFrom(fm.fieldType)) {
-							dbValue = rs.getDouble(colName);
-						} else {
-							dbValue = rs.getObject(colName, fm.fieldType);
-						}
-					}
-
+					Object dbValue = fm.getColumnValue(rs, colName);
 					fm.setFieldValue(tmp, dbValue);
 				}
 				result.add(tmp);

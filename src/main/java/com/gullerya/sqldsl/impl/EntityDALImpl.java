@@ -16,7 +16,7 @@ public class EntityDALImpl<ET> implements EntityDAL<ET> {
 	private final ESConfig<ET> config;
 
 	public EntityDALImpl(Class<ET> entityType, DataSource ds) throws ReflectiveOperationException {
-		EntityMetadata<ET> em = new EntityMetadata<>(entityType);
+		EntityMetaProc<ET> em = new EntityMetaProc<>(entityType);
 		this.config = new ESConfig<>(ds, em);
 	}
 
@@ -58,9 +58,9 @@ public class EntityDALImpl<ET> implements EntityDAL<ET> {
 
 	public static final class ESConfig<ET> {
 		private final DataSource ds;
-		final EntityMetadata<ET> em;
+		final EntityMetaProc<ET> em;
 
-		private ESConfig(DataSource ds, EntityMetadata<ET> em) {
+		private ESConfig(DataSource ds, EntityMetaProc<ET> em) {
 			this.ds = ds;
 			this.em = em;
 		}

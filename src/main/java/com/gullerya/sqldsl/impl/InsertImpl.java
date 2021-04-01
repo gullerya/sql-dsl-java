@@ -1,6 +1,5 @@
 package com.gullerya.sqldsl.impl;
 
-import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,24 +28,14 @@ public class InsertImpl<T> implements Insert<T> {
 			throw new IllegalArgumentException("inserted entity MUST NOT be NULL");
 		}
 		Map<String, String> literalsMap = validateCollect(literals);
-		List<Map.Entry<EntityFieldMetadata, Object>> params = new ArrayList<>();
+		List<Map.Entry<FieldMetaProc, Object>> params = new ArrayList<>();
 		String sql = buildInsertSet(entity, literalsMap, params);
 		return config.prepareStatementAndDo(sql, s -> {
 			for (int i = 0; i < params.size(); i++) {
-				Map.Entry<EntityFieldMetadata, Object> paramValue = params.get(i);
-				EntityFieldMetadata fieldMetadata = paramValue.getKey();
-				Object pv = paramValue.getValue();
-				if (fieldMetadata.converter != null) {
-					s.setObject(i + 1, fieldMetadata.converter.convertToDatabaseColumn(pv));
-				} else {
-					if (pv instanceof InputStream) {
-						s.setBinaryStream(i + 1, (InputStream) pv);
-					} else if (pv instanceof byte[]) {
-						s.setBytes(i + 1, (byte[]) pv);
-					} else {
-						s.setObject(i + 1, pv);
-					}
-				}
+				Map.Entry<FieldMetaProc, Object> paramValue = params.get(i);
+				FieldMetaProc fmp = paramValue.getKey();
+				Object v = paramValue.getValue();
+				fmp.setColumnValue(s, i + 1, v);
 			}
 			return s.executeUpdate();
 		});
@@ -58,25 +47,15 @@ public class InsertImpl<T> implements Insert<T> {
 			throw new IllegalArgumentException("entities list MUST NOT be NULL nor EMPTY");
 		}
 		Map<String, String> literalsMap = validateCollect(literals);
-		List<Map.Entry<EntityFieldMetadata, Object[]>> paramsSets = new ArrayList<>();
+		List<Map.Entry<FieldMetaProc, Object[]>> paramsSets = new ArrayList<>();
 		String sql = buildInsertSet(entities, literalsMap, paramsSets);
 		return config.prepareStatementAndDo(sql, s -> {
 			for (int ec = 0; ec < entities.size(); ec++) {
 				for (int fc = 0; fc < paramsSets.size(); fc++) {
-					Map.Entry<EntityFieldMetadata, Object[]> paramValue = paramsSets.get(fc);
-					EntityFieldMetadata fieldMetadata = paramValue.getKey();
-					Object pv = paramValue.getValue()[ec];
-					if (fieldMetadata.converter != null) {
-						s.setObject(fc + 1, fieldMetadata.converter.convertToDatabaseColumn(pv));
-					} else {
-						if (pv instanceof InputStream) {
-							s.setBinaryStream(fc + 1, (InputStream) pv);
-						} else if (pv instanceof byte[]) {
-							s.setBytes(fc + 1, (byte[]) pv);
-						} else {
-							s.setObject(fc + 1, pv);
-						}
-					}
+					Map.Entry<FieldMetaProc, Object[]> paramValue = paramsSets.get(fc);
+					FieldMetaProc fmp = paramValue.getKey();
+					Object v = paramValue.getValue()[ec];
+					fmp.setColumnValue(s, fc + 1, v);
 				}
 				s.addBatch();
 			}
@@ -97,26 +76,19 @@ public class InsertImpl<T> implements Insert<T> {
 		return result;
 	}
 
-	private String buildInsertSet(T entity, Map<String, String> literals, List<Map.Entry<EntityFieldMetadata, Object>> params) {
+	private String buildInsertSet(T entity, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object>> params) {
 		Set<String> nonNullSet = new LinkedHashSet<>();
-		try {
-			for (Entry<String, EntityFieldMetadata> e : config.em.byColumn.entrySet()) {
-				String cName = e.getKey();
-				EntityFieldMetadata fm = e.getValue();
-				if (literals.containsKey(cName)) {
-					continue;
-				}
-				Object fv = fm.getFieldValue(entity);
-				if (fm.converter != null) {
-					fv = fm.converter.convertToDatabaseColumn(fv);
-				}
-				if (fv != null) {
-					nonNullSet.add(cName);
-					params.add(new AbstractMap.SimpleEntry<>(fm, fv));
-				}
+		for (Entry<String, FieldMetaProc> e : config.em.byColumn.entrySet()) {
+			String cName = e.getKey();
+			FieldMetaProc fmp = e.getValue();
+			if (literals.containsKey(cName)) {
+				continue;
 			}
-		} catch (ReflectiveOperationException roe) {
-			throw new IllegalStateException("failed to prepare insert data set", roe);
+			Object fv = fmp.getFieldValue(entity);
+			if (fv != null) {
+				nonNullSet.add(cName);
+				params.add(new AbstractMap.SimpleEntry<>(fmp, fv));
+			}
 		}
 
 		String fields = String.join(",", nonNullSet);
@@ -128,29 +100,22 @@ public class InsertImpl<T> implements Insert<T> {
 		return "INSERT INTO " + config.em.fqSchemaTableName + " (" + fields + ")" + " VALUES (" + values + ")";
 	}
 
-	private String buildInsertSet(Collection<T> entities, Map<String, String> literals, List<Map.Entry<EntityFieldMetadata, Object[]>> params) {
-		Map<String, Map.Entry<EntityFieldMetadata, Object[]>> nonNullSet = new LinkedHashMap<>();
-		try {
-			for (EntityFieldMetadata fm : config.em.byColumn.values()) {
-				if (literals.containsKey(fm.columnName)) {
-					continue;
-				}
-				int i = 0;
-				for (T entity : entities) {
-					Object fv = fm.getFieldValue(entity);
-					if (fm.converter != null) {
-						fv = fm.converter.convertToDatabaseColumn(fv);
-					}
-					if (fv != null) {
-						nonNullSet
-								.computeIfAbsent(fm.columnName, c -> new AbstractMap.SimpleEntry<>(fm, new Object[entities.size()]))
-								.getValue()[i] = fv;
-					}
-					i++;
-				}
+	private String buildInsertSet(Collection<T> entities, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object[]>> params) {
+		Map<String, Map.Entry<FieldMetaProc, Object[]>> nonNullSet = new LinkedHashMap<>();
+		for (FieldMetaProc fm : config.em.byColumn.values()) {
+			if (literals.containsKey(fm.columnName)) {
+				continue;
 			}
-		} catch (ReflectiveOperationException roe) {
-			throw new IllegalStateException("failed to prepare insert data set", roe);
+			int i = 0;
+			for (T entity : entities) {
+				Object fv = fm.getFieldValue(entity);
+				if (fv != null) {
+					nonNullSet
+							.computeIfAbsent(fm.columnName, c -> new AbstractMap.SimpleEntry<>(fm, new Object[entities.size()]))
+							.getValue()[i] = fv;
+				}
+				i++;
+			}
 		}
 		String fields = String.join(",", nonNullSet.keySet());
 		String values = String.join(",", Collections.nCopies(nonNullSet.size(), "?"));

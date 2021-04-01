@@ -35,11 +35,8 @@ public class DeleteImpl<ET> implements Delete<ET> {
 				int i = 0;
 				for (Where.WhereFieldValuePair parameter : parametersCollector) {
 					i++;
-					EntityFieldMetadata fm = config.em.byColumn.get(parameter.column);
-					Object pv = parameter.value;
-					if (fm.converter != null) {
-						pv = fm.converter.convertToDatabaseColumn(pv);
-					}
+					FieldMetaProc fm = config.em.byColumn.get(parameter.column);
+					Object pv = fm.translateFieldToColumn(parameter.value);
 					s.setObject(i, pv);
 				}
 			}

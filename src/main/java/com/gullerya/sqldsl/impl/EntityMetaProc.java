@@ -10,13 +10,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-public class EntityMetadata<ET> {
+public class EntityMetaProc<ET> {
 	final Class<ET> type;
 	final String fqSchemaTableName;
-	final Map<String, EntityFieldMetadata> byFName;
-	final Map<String, EntityFieldMetadata> byColumn;
+	final Map<String, FieldMetaProc> byFName;
+	final Map<String, FieldMetaProc> byColumn;
 
-	EntityMetadata(Class<ET> type) throws ReflectiveOperationException {
+	EntityMetaProc(Class<ET> type) throws ReflectiveOperationException {
 		this.type = type;
 
 		Entity e = type.getDeclaredAnnotation(Entity.class);
@@ -32,12 +32,12 @@ public class EntityMetadata<ET> {
 			fqSchemaTableName = "\"" + tmpName + "\"";
 		}
 
-		Map<String, EntityFieldMetadata> tmpByField = new HashMap<>();
-		Map<String, EntityFieldMetadata> tmpByColumn = new HashMap<>();
+		Map<String, FieldMetaProc> tmpByField = new HashMap<>();
+		Map<String, FieldMetaProc> tmpByColumn = new HashMap<>();
 		for (Field f : type.getDeclaredFields()) {
 			Column ef = f.getDeclaredAnnotation(Column.class);
 			if (ef != null) {
-				EntityFieldMetadata fm = new EntityFieldMetadata(f, ef);
+				FieldMetaProc fm = new FieldMetaProc(f, ef);
 				tmpByField.put(f.getName(), fm);
 				tmpByColumn.put(fm.columnName, fm);
 			}

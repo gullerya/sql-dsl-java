@@ -2,7 +2,7 @@ package com.gullerya.sqldsl.api.clauses;
 
 import java.util.Set;
 
-import com.gullerya.sqldsl.impl.EntityMetadata;
+import com.gullerya.sqldsl.impl.EntityMetaProc;
 
 public interface OrderBy<DS> {
 
@@ -11,8 +11,8 @@ public interface OrderBy<DS> {
 	/**
 	 * clause validator
 	 */
-	static <T> void validate(EntityMetadata<T> em, Set<String> groupByFields,
-			Set<OrderByClause> orderByFields) {
+	static <T> void validate(EntityMetaProc<T> em, Set<String> groupByFields,
+	                         Set<OrderByClause> orderByFields) {
 		// for (OrderByClause obc : orderByFields) {
 		// if (!em.byColumn.containsKey(obc.field)) {
 		// throw new IllegalArgumentException(

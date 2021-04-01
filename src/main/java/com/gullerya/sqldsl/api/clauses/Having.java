@@ -1,6 +1,6 @@
 package com.gullerya.sqldsl.api.clauses;
 
-import com.gullerya.sqldsl.impl.EntityMetadata;
+import com.gullerya.sqldsl.impl.EntityMetaProc;
 
 public interface Having<DS> {
 
@@ -9,7 +9,7 @@ public interface Having<DS> {
 	/**
 	 * clause validator
 	 */
-	static <T> void validate(EntityMetadata<T> em, String... fields) {
+	static <T> void validate(EntityMetaProc<T> em, String... fields) {
 		// if (fields == null || fields.length == 0) {
 		// throw new IllegalArgumentException("fields MUST NOT be NULL nor Empty");
 		// }

@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.gullerya.sqldsl.impl.EntityMetadata;
+import com.gullerya.sqldsl.impl.EntityMetaProc;
 
 public interface Where<DS> {
 
@@ -16,7 +16,7 @@ public interface Where<DS> {
 	/**
 	 * clause validator
 	 */
-	static <T> void validate(EntityMetadata<T> em, WhereClause where) {
+	static <T> void validate(EntityMetaProc<T> em, WhereClause where) {
 		// if (where == null) {
 		// throw new IllegalArgumentException("where clause MUST NOT be NULL");
 		// }
