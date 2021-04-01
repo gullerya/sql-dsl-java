@@ -10,7 +10,8 @@
 
     <name>SQL DSL (Java)</name>
     <description>
-        SQL queries builder and executor, implemented in Java. Featured by strongly typed validations, simplicity of use.
+        SQL queries builder and executor, implemented in Java. Featured by strongly typed validations, simplicity of
+        use.
     </description>
     <url>https://github.com/gullerya/sql-dsl-java</url>
 
@@ -64,7 +65,7 @@
         <jacoco-maven-plugin>0.8.6</jacoco-maven-plugin>
         <spotbugs>4.2.2</spotbugs>
         <hikaricp>4.0.3</hikaricp>
-		<apache-derby>10.15.2.0</apache-derby>
+        <apache-derby>10.15.2.0</apache-derby>
         <sql-maven-plugin>1.5</sql-maven-plugin>
         <mssql-jdbc>9.2.1.jre11</mssql-jdbc>
         <postgresql>42.2.19</postgresql>
@@ -101,18 +102,18 @@
             <version>${hikaricp}</version>
             <scope>test</scope>
         </dependency>
-		<dependency>
-			<artifactId>derby</artifactId>
-			<groupId>org.apache.derby</groupId>
-			<version>${apache-derby}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derbytools</artifactId>
-			<version>${apache-derby}</version>
-			<scope>test</scope>
-		</dependency>
+        <dependency>
+            <artifactId>derby</artifactId>
+            <groupId>org.apache.derby</groupId>
+            <version>${apache-derby}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbytools</artifactId>
+            <version>${apache-derby}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <artifactId>mssql-jdbc</artifactId>
             <groupId>com.microsoft.sqlserver</groupId>
@@ -282,5 +283,33 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
