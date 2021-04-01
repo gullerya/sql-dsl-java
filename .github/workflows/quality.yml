@@ -22,7 +22,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Lint
+      - name: Spotbugs
         run: mvn spotbugs:check
 
       - name: Test
