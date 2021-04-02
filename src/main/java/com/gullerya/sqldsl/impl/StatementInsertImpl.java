@@ -34,9 +34,9 @@ public class StatementInsertImpl<T> implements Insert<T> {
 		return config.prepareStatementAndDo(sql, s -> {
 			for (int i = 0; i < params.size(); i++) {
 				Map.Entry<FieldMetaProc, Object> paramValue = params.get(i);
-				FieldMetaProc fmp = paramValue.getKey();
+				FieldMetaProc fm = paramValue.getKey();
 				Object v = paramValue.getValue();
-				fmp.setColumnValue(s, i + 1, v);
+				fm.setColumnValue(s, i + 1, v);
 			}
 			return s.executeUpdate();
 		});
@@ -84,14 +84,17 @@ public class StatementInsertImpl<T> implements Insert<T> {
 		Set<String> nonNullSet = new LinkedHashSet<>();
 		for (Entry<String, FieldMetaProc> e : config.em.byColumn.entrySet()) {
 			String cName = e.getKey();
-			FieldMetaProc fmp = e.getValue();
+			FieldMetaProc fm = e.getValue();
 			if (literals.containsKey(cName)) {
 				continue;
 			}
-			Object fv = fmp.getFieldValue(entity);
+			if (!fm.column.insertable()) {
+				continue;
+			}
+			Object fv = fm.getFieldValue(entity);
 			if (fv != null) {
 				nonNullSet.add(cName);
-				params.add(new AbstractMap.SimpleEntry<>(fmp, fv));
+				params.add(new AbstractMap.SimpleEntry<>(fm, fv));
 			}
 		}
 
