@@ -1,7 +1,7 @@
 package com.gullerya.sqldsl.api.clauses;
 
-public interface Having<DS> {
+public interface Having<S> {
 
-	DS having(String... fields);
+	S having(String... fields);
 
 }

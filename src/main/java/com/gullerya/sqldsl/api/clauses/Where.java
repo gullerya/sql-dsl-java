@@ -7,9 +7,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public interface Where<DS> {
+public interface Where<S> {
 
-	DS where(WhereClause where);
+	S where(WhereClause where);
 
 	final class WhereFieldValuePair {
 		public String column;

@@ -1,7 +1,7 @@
 package com.gullerya.sqldsl.api.clauses;
 
-public interface GroupBy<DS> {
+public interface GroupBy<S> {
 
-	DS groupBy(String... fields);
+	S groupBy(String... fields);
 
 }

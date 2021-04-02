@@ -1,8 +1,8 @@
 package com.gullerya.sqldsl.api.clauses;
 
-public interface OrderBy<DS> {
+public interface OrderBy<S> {
 
-	DS orderBy(OrderByClause orderBy, OrderByClause... orderByMore);
+	S orderBy(OrderByClause orderBy, OrderByClause... orderByMore);
 
 	final class OrderByClause {
 		private final String direction;

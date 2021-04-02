@@ -100,5 +100,17 @@ public class EntityDALTest {
 
 		@Column
 		private Float height;
+
+		@Override
+		public String toString() {
+			return "TestEntityA{" +
+					"firstName='" + firstName + '\'' +
+					", lastName='" + lastName + '\'' +
+					", birthDate=" + birthDate +
+					", active=" + active +
+					", children=" + children +
+					", height=" + height +
+					'}';
+		}
 	}
 }
