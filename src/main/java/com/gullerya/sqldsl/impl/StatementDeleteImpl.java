@@ -6,10 +6,10 @@ import java.util.Collection;
 import com.gullerya.sqldsl.api.clauses.Where;
 import com.gullerya.sqldsl.api.statements.Delete;
 
-public class StatementDeleteImpl<ET> implements Delete<ET> {
-	private final EntityDALImpl.ESConfig<ET> config;
+public class StatementDeleteImpl<T> implements Delete<T> {
+	private final EntityDALImpl.ESConfig<T> config;
 
-	StatementDeleteImpl(EntityDALImpl.ESConfig<ET> config) {
+	StatementDeleteImpl(EntityDALImpl.ESConfig<T> config) {
 		this.config = config;
 	}
 
@@ -44,7 +44,7 @@ public class StatementDeleteImpl<ET> implements Delete<ET> {
 		});
 	}
 
-	private void validateWhereClause(EntityMetaProc<ET> em, Where.WhereClause where) {
+	private void validateWhereClause(EntityMetaProc<T> em, Where.WhereClause where) {
 		if (where == null) {
 			throw new IllegalArgumentException("where clause MUST NOT be NULL");
 		}

@@ -12,11 +12,11 @@ import com.gullerya.sqldsl.EntityDAL;
 import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.clauses.Where;
 
-public class EntityDALImpl<ET> implements EntityDAL<ET> {
-	private final ESConfig<ET> config;
+public class EntityDALImpl<T> implements EntityDAL<T> {
+	private final ESConfig<T> config;
 
-	public EntityDALImpl(Class<ET> entityType, DataSource ds) throws ReflectiveOperationException {
-		EntityMetaProc<ET> em = new EntityMetaProc<>(entityType);
+	public EntityDALImpl(Class<T> entityType, DataSource ds) throws ReflectiveOperationException {
+		EntityMetaProc<T> em = new EntityMetaProc<>(entityType);
 		this.config = new ESConfig<>(ds, em);
 	}
 
@@ -31,28 +31,28 @@ public class EntityDALImpl<ET> implements EntityDAL<ET> {
 	}
 
 	@Override
-	public int insert(ET entity, Literal... literals) {
+	public int insert(T entity, Literal... literals) {
 		return new StatementInsertImpl<>(config).insert(entity, literals);
 	}
 
 	@Override
-	public int[] insert(Collection<ET> entities, Literal... literals) {
+	public int[] insert(Collection<T> entities, Literal... literals) {
 		return new StatementInsertImpl<>(config).insert(entities, literals);
 	}
 
 	@Override
-	public SelectDownstream<ET> select(String... fields) {
+	public SelectDownstream<T> select(String... fields) {
 		return new StatementSelectImpl<>(config).select(fields);
 	}
 
 	@Override
-	public SelectDownstream<ET> select(Set<String> fields) {
+	public SelectDownstream<T> select(Set<String> fields) {
 		return new StatementSelectImpl<>(config).select(fields);
 	}
 
 	@Override
-	public UpdateDownstream update(ET entity, Literal... literals) {
-		return new UpdateImpl<>(config).update(entity, literals);
+	public UpdateDownstream update(T entity, Literal... literals) {
+		return new StatementUpdateImpl<>(config).update(entity, literals);
 	}
 
 	public static final class ESConfig<ET> {

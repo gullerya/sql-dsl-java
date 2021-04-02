@@ -1,22 +1,22 @@
 package com.gullerya.sqldsl;
 
 public abstract class Literal {
-	public final String field;
+	public final String column;
 	public final String value;
 
-	private Literal(String field, String value) {
-		if (field == null || field.isEmpty()) {
-			throw new IllegalArgumentException("field MUST NOT be NULL nor EMPTY");
+	private Literal(String column, String value) {
+		if (column == null || column.isEmpty()) {
+			throw new IllegalArgumentException("column MUST NOT be NULL nor EMPTY");
 		}
 		if (value == null || value.isEmpty()) {
 			throw new IllegalArgumentException("value MUST NOT be NULL nor EMPTY");
 		}
-		this.field = field;
+		this.column = column;
 		this.value = value;
 	}
 
-	public static Literal exp(String field, String value) {
-		return new LiteralExpression(field, value);
+	public static Literal exp(String column, String value) {
+		return new LiteralExpression(column, value);
 	}
 
 	private static final class LiteralExpression extends Literal {

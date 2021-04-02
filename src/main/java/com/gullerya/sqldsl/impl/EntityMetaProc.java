@@ -10,13 +10,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-public class EntityMetaProc<ET> {
-	final Class<ET> type;
+public class EntityMetaProc<T> {
+	final Class<T> type;
 	final String fqSchemaTableName;
 	final Map<String, FieldMetaProc> byFName;
 	final Map<String, FieldMetaProc> byColumn;
 
-	EntityMetaProc(Class<ET> type) throws ReflectiveOperationException {
+	EntityMetaProc(Class<T> type) throws ReflectiveOperationException {
 		this.type = type;
 
 		Entity e = type.getDeclaredAnnotation(Entity.class);

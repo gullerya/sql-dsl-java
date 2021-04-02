@@ -16,7 +16,7 @@ import com.gullerya.sqldsl.impl.EntityDALImpl;
  * 
  * - SQL statements (DELETE, INSERT, SELECT, UPDATE)
  */
-public interface EntityDAL<ET> extends Delete<ET>, Insert<ET>, Select<ET>, Update<ET> {
+public interface EntityDAL<T> extends Delete<T>, Insert<T>, Select<T>, Update<T> {
 
 	/**
 	 * Instantiate DAL for a specific entity with the given DataSource

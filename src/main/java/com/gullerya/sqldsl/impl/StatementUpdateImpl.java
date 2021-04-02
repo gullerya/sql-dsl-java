@@ -7,23 +7,23 @@ import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.clauses.Where;
 import com.gullerya.sqldsl.api.statements.Update;
 
-class UpdateImpl<ET> implements Update<ET>, Update.UpdateDownstream {
-	private final EntityDALImpl.ESConfig<ET> config;
+class StatementUpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
+	private final EntityDALImpl.ESConfig<T> config;
 	private final Map<String, Map.Entry<FieldMetaProc, Object>> updateSet = new LinkedHashMap<>();
 	private final Map<String, String> literalsSet = new TreeMap<>();
 
-	UpdateImpl(EntityDALImpl.ESConfig<ET> config) {
+	StatementUpdateImpl(EntityDALImpl.ESConfig<T> config) {
 		this.config = config;
 	}
 
 	@Override
-	public UpdateDownstream update(ET updateSet, Literal... literals) {
+	public UpdateDownstream update(T updateSet, Literal... literals) {
 		if (updateSet == null) {
 			throw new IllegalArgumentException("update set MUST NOT be NULL");
 		}
-		validateCollect(literals);
+		validateCollect(literalsSet, literals);
 		buildUpdateSet(updateSet);
-		if (this.updateSet.isEmpty() && this.literalsSet.isEmpty()) {
+		if (this.updateSet.isEmpty() && literalsSet.isEmpty()) {
 			throw new IllegalArgumentException("update set MUST HAVE at least one updatable field which value is not NULL");
 		}
 		return this;
@@ -40,18 +40,22 @@ class UpdateImpl<ET> implements Update<ET>, Update.UpdateDownstream {
 		return internalUpdate(where);
 	}
 
-	private void validateCollect(Literal... literals) {
+	private void validateCollect(Map<String, String> accumulator, Literal... literals) {
 		if (literals != null && literals.length > 0) {
 			for (Literal literal : literals) {
-				if (!config.em.byColumn.containsKey(literal.field)) {
-					throw new IllegalArgumentException("field '" + literal.field + "' is not found in entity " + config.em.type);
+				FieldMetaProc fm = config.em.byColumn.get((literal.column));
+				if (fm == null) {
+					throw new IllegalArgumentException("column '" + literal.column + "' is not defined for entity " + config.em.type);
 				}
-				literalsSet.put(literal.field, literal.value);
+				if (!fm.column.insertable()) {
+					continue;
+				}
+				accumulator.put(literal.column, literal.value);
 			}
 		}
 	}
 
-	private void validateWhereClause(EntityMetaProc<ET> em, Where.WhereClause where) {
+	private void validateWhereClause(EntityMetaProc<T> em, Where.WhereClause where) {
 		if (where == null) {
 			throw new IllegalArgumentException("where clause MUST NOT be NULL");
 		}
@@ -63,14 +67,14 @@ class UpdateImpl<ET> implements Update<ET>, Update.UpdateDownstream {
 		}
 	}
 
-	private void buildUpdateSet(ET input) {
+	private void buildUpdateSet(T input) {
 		for (FieldMetaProc fm : config.em.byColumn.values()) {
 			if (literalsSet.containsKey(fm.columnName)) {
 				continue;
 			}
-//				if (fm.fieldMetadata.readonly()) {
-//					continue;
-//				}
+			if (!fm.column.updatable()) {
+				continue;
+			}
 
 			Object fv = fm.getFieldValue(input);
 			Object cfv = fm.translateFieldToColumn(fv);

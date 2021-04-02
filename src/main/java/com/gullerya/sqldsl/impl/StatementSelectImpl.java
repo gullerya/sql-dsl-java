@@ -16,20 +16,20 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstream<ET>, Select.WhereDownstream<ET>,
-		Select.GroupByDownstream<ET>, Select.OrderByDownstream<ET> {
-	private final EntityDALImpl.ESConfig<ET> config;
+public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Select.WhereDownstream<T>,
+		Select.GroupByDownstream<T>, Select.OrderByDownstream<T> {
+	private final EntityDALImpl.ESConfig<T> config;
 	private Set<String> selectedFields;
 	private Where.WhereClause where;
 	private Set<String> groupBy;
 	private Set<OrderBy.OrderByClause> orderBy;
 
-	StatementSelectImpl(EntityDALImpl.ESConfig<ET> config) {
+	StatementSelectImpl(EntityDALImpl.ESConfig<T> config) {
 		this.config = config;
 	}
 
 	@Override
-	public SelectDownstream<ET> select(String... fields) {
+	public SelectDownstream<T> select(String... fields) {
 		if (fields == null || fields.length == 0) {
 			throw new IllegalArgumentException("fields MUST NOT be NULL nor EMPTY");
 		}
@@ -50,7 +50,7 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 	}
 
 	@Override
-	public SelectDownstream<ET> select(Set<String> fields) {
+	public SelectDownstream<T> select(Set<String> fields) {
 		if (fields == null) {
 			throw new IllegalArgumentException("fields MUST NOT be NULL");
 		}
@@ -58,14 +58,14 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 	}
 
 	@Override
-	public WhereDownstream<ET> where(WhereClause where) {
+	public WhereDownstream<T> where(WhereClause where) {
 		validateWhereClause(config.em, where);
 		this.where = where;
 		return this;
 	}
 
 	@Override
-	public GroupByDownstream<ET> groupBy(String... fields) {
+	public GroupByDownstream<T> groupBy(String... fields) {
 		if (fields == null || fields.length == 0) {
 			throw new IllegalArgumentException("group by fields MUST NOT be NULL nor EMPTY");
 		}
@@ -76,7 +76,7 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 	}
 
 	@Override
-	public HavingDownstream<ET> having(String... fields) {
+	public HavingDownstream<T> having(String... fields) {
 		if (fields == null || fields.length == 0) {
 			throw new IllegalArgumentException("having fields MUST NOT be NULL nor EMPTY");
 		}
@@ -86,7 +86,7 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 	}
 
 	@Override
-	public OrderByDownstream<ET> orderBy(OrderByClause orderBy, OrderByClause... orderByMore) {
+	public OrderByDownstream<T> orderBy(OrderByClause orderBy, OrderByClause... orderByMore) {
 		if (orderBy == null) {
 			throw new IllegalArgumentException("order by clause/s MUST NOT be NULL");
 		}
@@ -101,8 +101,8 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 	}
 
 	@Override
-	public ET readSingle() {
-		List<ET> asList = internalRead(null, null);
+	public T readSingle() {
+		List<T> asList = internalRead(null, null);
 		if (asList.isEmpty()) {
 			return null;
 		} else if (asList.size() == 1) {
@@ -113,12 +113,12 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 	}
 
 	@Override
-	public List<ET> read() {
+	public List<T> read() {
 		return internalRead(null, null);
 	}
 
 	@Override
-	public List<ET> read(int limit) {
+	public List<T> read(int limit) {
 		if (limit == 0) {
 			throw new IllegalArgumentException("limit MUST be greater than 0");
 		}
@@ -126,7 +126,7 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 	}
 
 	@Override
-	public List<ET> read(int offset, int limit) {
+	public List<T> read(int offset, int limit) {
 		if (offset == 0) {
 			throw new IllegalArgumentException("offset MUST be greater than 0 ('read' methods without offset exists)");
 		}
@@ -136,7 +136,7 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 		return internalRead(offset, limit);
 	}
 
-	private List<ET> internalRead(Integer offset, Integer limit) {
+	private List<T> internalRead(Integer offset, Integer limit) {
 		String sql = "SELECT " + buildFieldsClause(config.em.fqSchemaTableName) + " FROM "
 				+ config.em.fqSchemaTableName;
 		Collection<WhereFieldValuePair> parametersCollector = new ArrayList<>();
@@ -178,7 +178,7 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 		}
 	}
 
-	private void validateWhereClause(EntityMetaProc<ET> em, WhereClause where) {
+	private void validateWhereClause(EntityMetaProc<T> em, WhereClause where) {
 		if (where == null) {
 			throw new IllegalArgumentException("where clause MUST NOT be NULL");
 		}
@@ -191,7 +191,7 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 		}
 	}
 
-	private void validateGroupByClause(EntityMetaProc<ET> em, Set<String> selectedFields, Set<String> groupByFields) {
+	private void validateGroupByClause(EntityMetaProc<T> em, Set<String> selectedFields, Set<String> groupByFields) {
 		for (String f : groupByFields) {
 			if (!em.byColumn.containsKey(f)) {
 				throw new IllegalArgumentException("field '" + f + "' not found in entity " + em.type + " definition");
@@ -210,7 +210,7 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 		}
 	}
 
-	private void validateHavingClause(EntityMetaProc<ET> em, Set<String> fields) {
+	private void validateHavingClause(EntityMetaProc<T> em, Set<String> fields) {
 		for (String f : fields) {
 			if (!em.byColumn.containsKey(f)) {
 				throw new IllegalArgumentException("field '" + f + "' not found in entity " + em.type + " definition");
@@ -218,7 +218,7 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 		}
 	}
 
-	private void validateOrderByClause(EntityMetaProc<ET> em, Set<String> groupByFields, Set<OrderByClause> orderByFields) {
+	private void validateOrderByClause(EntityMetaProc<T> em, Set<String> groupByFields, Set<OrderByClause> orderByFields) {
 		for (OrderByClause obc : orderByFields) {
 			if (!em.byColumn.containsKey(obc.field)) {
 				throw new IllegalArgumentException("field '" + obc.field + "' not found in entity " + em.type + " definition");
@@ -241,13 +241,13 @@ public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstr
 		return " ORDER BY " + orderBy.stream().map(OrderByClause::toString).collect(Collectors.joining(","));
 	}
 
-	private List<ET> translateDBRow(ResultSet rs) throws SQLException {
-		List<ET> result = new ArrayList<>();
+	private List<T> translateDBRow(ResultSet rs) throws SQLException {
+		List<T> result = new ArrayList<>();
 
 		try {
-			Constructor<ET> ctor = config.em.type.getDeclaredConstructor();
+			Constructor<T> ctor = config.em.type.getDeclaredConstructor();
 			while (rs.next()) {
-				ET tmp = ctor.newInstance();
+				T tmp = ctor.newInstance();
 				for (String f : selectedFields) {
 					FieldMetaProc fm = config.em.byColumn.get(f);
 					String colName = fm.columnName;

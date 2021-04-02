@@ -15,19 +15,20 @@ import java.util.Map.Entry;
 import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.statements.Insert;
 
-public class StatementInsertImpl<ET> implements Insert<ET> {
-	private final EntityDALImpl.ESConfig<ET> config;
+public class StatementInsertImpl<T> implements Insert<T> {
+	private final EntityDALImpl.ESConfig<T> config;
 
-	StatementInsertImpl(EntityDALImpl.ESConfig<ET> config) {
+	StatementInsertImpl(EntityDALImpl.ESConfig<T> config) {
 		this.config = config;
 	}
 
 	@Override
-	public int insert(ET entity, Literal... literals) {
+	public int insert(T entity, Literal... literals) {
 		if (entity == null) {
 			throw new IllegalArgumentException("inserted entity MUST NOT be NULL");
 		}
-		Map<String, String> literalsMap = validateCollect(literals);
+		Map<String, String> literalsMap = new TreeMap<>();
+		validateCollect(literalsMap, literals);
 		List<Map.Entry<FieldMetaProc, Object>> params = new ArrayList<>();
 		String sql = buildInsertSet(entity, literalsMap, params);
 		return config.prepareStatementAndDo(sql, s -> {
@@ -42,11 +43,12 @@ public class StatementInsertImpl<ET> implements Insert<ET> {
 	}
 
 	@Override
-	public int[] insert(Collection<ET> entities, Literal... literals) {
+	public int[] insert(Collection<T> entities, Literal... literals) {
 		if (entities == null || entities.isEmpty()) {
 			throw new IllegalArgumentException("entities list MUST NOT be NULL nor EMPTY");
 		}
-		Map<String, String> literalsMap = validateCollect(literals);
+		Map<String, String> literalsMap = new TreeMap<>();
+		validateCollect(literalsMap, literals);
 		List<Map.Entry<FieldMetaProc, Object[]>> paramsSets = new ArrayList<>();
 		String sql = buildInsertSet(entities, literalsMap, paramsSets);
 		return config.prepareStatementAndDo(sql, s -> {
@@ -63,20 +65,22 @@ public class StatementInsertImpl<ET> implements Insert<ET> {
 		});
 	}
 
-	private Map<String, String> validateCollect(Literal... literals) {
-		Map<String, String> result = new TreeMap<>();
+	private void validateCollect(Map<String, String> accumulator, Literal... literals) {
 		if (literals != null && literals.length > 0) {
 			for (Literal literal : literals) {
-				if (!config.em.byColumn.containsKey(literal.field)) {
-					throw new IllegalArgumentException("field '" + literal.field + "' is not found in entity " + config.em.type);
+				FieldMetaProc fm = config.em.byColumn.get((literal.column));
+				if (fm == null) {
+					throw new IllegalArgumentException("field '" + literal.column + "' is not found in entity " + config.em.type);
 				}
-				result.put(literal.field, literal.value);
+				if (!fm.column.insertable()) {
+					continue;
+				}
+				accumulator.put(literal.column, literal.value);
 			}
 		}
-		return result;
 	}
 
-	private String buildInsertSet(ET entity, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object>> params) {
+	private String buildInsertSet(T entity, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object>> params) {
 		Set<String> nonNullSet = new LinkedHashSet<>();
 		for (Entry<String, FieldMetaProc> e : config.em.byColumn.entrySet()) {
 			String cName = e.getKey();
@@ -100,14 +104,17 @@ public class StatementInsertImpl<ET> implements Insert<ET> {
 		return "INSERT INTO " + config.em.fqSchemaTableName + " (" + fields + ")" + " VALUES (" + values + ")";
 	}
 
-	private String buildInsertSet(Collection<ET> entities, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object[]>> params) {
+	private String buildInsertSet(Collection<T> entities, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object[]>> params) {
 		Map<String, Map.Entry<FieldMetaProc, Object[]>> nonNullSet = new LinkedHashMap<>();
 		for (FieldMetaProc fm : config.em.byColumn.values()) {
 			if (literals.containsKey(fm.columnName)) {
 				continue;
 			}
+			if (!fm.column.insertable()) {
+				continue;
+			}
 			int i = 0;
-			for (ET entity : entities) {
+			for (T entity : entities) {
 				Object fv = fm.getFieldValue(entity);
 				if (fv != null) {
 					nonNullSet
