@@ -16,15 +16,12 @@ public class EntityMetaProc<T> {
 	final Map<String, FieldMetaProc> byFName;
 	final Map<String, FieldMetaProc> byColumn;
 
-	EntityMetaProc(Class<T> type) throws ReflectiveOperationException {
-		this.type = type;
+	EntityMetaProc(Class<T> et) throws ReflectiveOperationException {
+		this.type = et;
 
-		Entity e = type.getDeclaredAnnotation(Entity.class);
-		if (e == null) {
-			throw new IllegalArgumentException("type " + type + " MUST be annotated with " + Entity.class);
-		}
-		String tmpName = !e.name().isEmpty() ? e.name() : type.getSimpleName();
-		Table t = type.getDeclaredAnnotation(Table.class);
+		Entity e = et.getDeclaredAnnotation(Entity.class);
+		Table t = et.getDeclaredAnnotation(Table.class);
+		String tmpName = !e.name().isEmpty() ? e.name() : et.getSimpleName();
 		if (t != null) {
 			tmpName = !t.name().isEmpty() ? t.name() : tmpName;
 			fqSchemaTableName = "\"" + (!t.schema().isEmpty() ? (t.schema() + "\".\"") : "") + tmpName + "\"";
@@ -34,7 +31,7 @@ public class EntityMetaProc<T> {
 
 		Map<String, FieldMetaProc> tmpByField = new HashMap<>();
 		Map<String, FieldMetaProc> tmpByColumn = new HashMap<>();
-		for (Field f : type.getDeclaredFields()) {
+		for (Field f : et.getDeclaredFields()) {
 			Column ef = f.getDeclaredAnnotation(Column.class);
 			if (ef != null) {
 				FieldMetaProc fm = new FieldMetaProc(f, ef);
@@ -43,8 +40,7 @@ public class EntityMetaProc<T> {
 			}
 		}
 		if (tmpByField.isEmpty()) {
-			throw new IllegalArgumentException(
-					"type " + type + " MUST have at least 1 fields annotated with " + Column.class);
+			throw new IllegalArgumentException("entity type MUST have at least 1 fields annotated with '" + Column.class + "', " + et + " isn't");
 		}
 		byFName = tmpByField.entrySet().stream().sorted(Map.Entry.comparingByKey())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
