@@ -1,36 +1,25 @@
 package com.gullerya.sqldsl.api.clauses;
 
-import java.util.Set;
-
-import com.gullerya.sqldsl.impl.EntityMetaProc;
-
 public interface OrderBy<DS> {
 
 	DS orderBy(OrderByClause orderBy, OrderByClause... orderByMore);
 
-	/**
-	 * clause validator
-	 */
-	static <T> void validate(EntityMetaProc<T> em, Set<String> groupByFields,
-	                         Set<OrderByClause> orderByFields) {
-		// for (OrderByClause obc : orderByFields) {
-		// if (!em.byColumn.containsKey(obc.field)) {
-		// throw new IllegalArgumentException(
-		// "field '" + obc.field + "' not found in entity " + em.type + " definition");
-		// }
-		// }
-		// if (groupByFields != null && !groupByFields.isEmpty()) {
-		// List<String> ill = new ArrayList<>();
-		// for (OrderByClause obc : orderByFields) {
-		// if (!groupByFields.contains(obc.field)) {
-		// ill.add(obc.field);
-		// }
-		// }
-		// if (!ill.isEmpty()) {
-		// throw new IllegalArgumentException("field/s [" + String.join(", ", ill)
-		// + "] is/are found in the ORDER BY clause, but NOT in the GROUP BY clause");
-		// }
-		// }
+	final class OrderByClause {
+		private final String direction;
+		public final String field;
+
+		private OrderByClause(String field, String direction) {
+			if (field == null || field.isEmpty()) {
+				throw new IllegalArgumentException("field MUST NOT be NULL nor EMPTY");
+			}
+			this.field = field;
+			this.direction = direction;
+		}
+
+		@Override
+		public String toString() {
+			return field + " " + direction;
+		}
 	}
 
 	/**
@@ -42,18 +31,5 @@ public interface OrderBy<DS> {
 
 	static OrderByClause desc(String field) {
 		return new OrderByClause(field, "DESC");
-	}
-
-	final class OrderByClause {
-		public final String field;
-		public final String direction;
-
-		private OrderByClause(String field, String direction) {
-			if (field == null || field.isEmpty()) {
-				throw new IllegalArgumentException("field MUST NOT be NULL nor EMPTY");
-			}
-			this.field = field;
-			this.direction = direction;
-		}
 	}
 }

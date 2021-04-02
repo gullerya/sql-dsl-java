@@ -1,6 +1,5 @@
 package com.gullerya.sqldsl.impl;
 
-import com.gullerya.sqldsl.api.clauses.GroupBy;
 import com.gullerya.sqldsl.api.clauses.OrderBy;
 import com.gullerya.sqldsl.api.clauses.Where;
 import com.gullerya.sqldsl.api.statements.Select;
@@ -17,20 +16,20 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Select.WhereDownstream<T>,
-		Select.GroupByDownstream<T>, Select.OrderByDownstream<T> {
-	private final EntityDALImpl.ESConfig<T> config;
+public class StatementSelectImpl<ET> implements Select<ET>, Select.SelectDownstream<ET>, Select.WhereDownstream<ET>,
+		Select.GroupByDownstream<ET>, Select.OrderByDownstream<ET> {
+	private final EntityDALImpl.ESConfig<ET> config;
 	private Set<String> selectedFields;
 	private Where.WhereClause where;
 	private Set<String> groupBy;
 	private Set<OrderBy.OrderByClause> orderBy;
 
-	SelectImpl(EntityDALImpl.ESConfig<T> config) {
+	StatementSelectImpl(EntityDALImpl.ESConfig<ET> config) {
 		this.config = config;
 	}
 
 	@Override
-	public SelectDownstream<T> select(String... fields) {
+	public SelectDownstream<ET> select(String... fields) {
 		if (fields == null || fields.length == 0) {
 			throw new IllegalArgumentException("fields MUST NOT be NULL nor EMPTY");
 		}
@@ -51,7 +50,7 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 	}
 
 	@Override
-	public SelectDownstream<T> select(Set<String> fields) {
+	public SelectDownstream<ET> select(Set<String> fields) {
 		if (fields == null) {
 			throw new IllegalArgumentException("fields MUST NOT be NULL");
 		}
@@ -59,30 +58,35 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 	}
 
 	@Override
-	public WhereDownstream<T> where(WhereClause where) {
-		Where.validate(config.em, where);
+	public WhereDownstream<ET> where(WhereClause where) {
+		validateWhereClause(config.em, where);
 		this.where = where;
 		return this;
 	}
 
 	@Override
-	public GroupByDownstream<T> groupBy(String... fields) {
+	public GroupByDownstream<ET> groupBy(String... fields) {
 		if (fields == null || fields.length == 0) {
 			throw new IllegalArgumentException("group by fields MUST NOT be NULL nor EMPTY");
 		}
 		Set<String> tmp = new LinkedHashSet<>(Arrays.asList(fields));
-		GroupBy.validate(config.em, selectedFields, tmp);
+		validateGroupByClause(config.em, selectedFields, tmp);
 		this.groupBy = tmp;
 		return this;
 	}
 
 	@Override
-	public HavingDownstream<T> having(String... fields) {
+	public HavingDownstream<ET> having(String... fields) {
+		if (fields == null || fields.length == 0) {
+			throw new IllegalArgumentException("having fields MUST NOT be NULL nor EMPTY");
+		}
+		Set<String> tmp = new LinkedHashSet<>(Arrays.asList(fields));
+		validateHavingClause(config.em, tmp);
 		throw new IllegalStateException("not implemented");
 	}
 
 	@Override
-	public OrderByDownstream<T> orderBy(OrderByClause orderBy, OrderByClause... orderByMore) {
+	public OrderByDownstream<ET> orderBy(OrderByClause orderBy, OrderByClause... orderByMore) {
 		if (orderBy == null) {
 			throw new IllegalArgumentException("order by clause/s MUST NOT be NULL");
 		}
@@ -91,14 +95,14 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 		if (orderByMore != null && orderByMore.length > 0) {
 			tmp.addAll(Arrays.asList(orderByMore));
 		}
-		OrderBy.validate(config.em, groupBy, tmp);
+		validateOrderByClause(config.em, groupBy, tmp);
 		this.orderBy = tmp;
 		return this;
 	}
 
 	@Override
-	public T readSingle() {
-		List<T> asList = internalRead(null, null);
+	public ET readSingle() {
+		List<ET> asList = internalRead(null, null);
 		if (asList.isEmpty()) {
 			return null;
 		} else if (asList.size() == 1) {
@@ -109,12 +113,12 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 	}
 
 	@Override
-	public List<T> read() {
+	public List<ET> read() {
 		return internalRead(null, null);
 	}
 
 	@Override
-	public List<T> read(int limit) {
+	public List<ET> read(int limit) {
 		if (limit == 0) {
 			throw new IllegalArgumentException("limit MUST be greater than 0");
 		}
@@ -122,7 +126,7 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 	}
 
 	@Override
-	public List<T> read(int offset, int limit) {
+	public List<ET> read(int offset, int limit) {
 		if (offset == 0) {
 			throw new IllegalArgumentException("offset MUST be greater than 0 ('read' methods without offset exists)");
 		}
@@ -132,7 +136,7 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 		return internalRead(offset, limit);
 	}
 
-	private List<T> internalRead(Integer offset, Integer limit) {
+	private List<ET> internalRead(Integer offset, Integer limit) {
 		String sql = "SELECT " + buildFieldsClause(config.em.fqSchemaTableName) + " FROM "
 				+ config.em.fqSchemaTableName;
 		Collection<WhereFieldValuePair> parametersCollector = new ArrayList<>();
@@ -174,18 +178,76 @@ public class SelectImpl<T> implements Select<T>, Select.SelectDownstream<T>, Sel
 		}
 	}
 
-	private String buildOrderByClause() {
-		return " ORDER BY "
-				+ orderBy.stream().map(obs -> obs.field + " " + obs.direction).collect(Collectors.joining(","));
+	private void validateWhereClause(EntityMetaProc<ET> em, WhereClause where) {
+		if (where == null) {
+			throw new IllegalArgumentException("where clause MUST NOT be NULL");
+		}
+		Collection<String> fields = where.collectFields();
+		for (String f : fields) {
+			if (!em.byColumn.containsKey(f)) {
+				throw new IllegalArgumentException("field '" + f + "' not found in entity " +
+						em.type + " definition");
+			}
+		}
 	}
 
-	private List<T> translateDBRow(ResultSet rs) throws SQLException {
-		List<T> result = new ArrayList<>();
+	private void validateGroupByClause(EntityMetaProc<ET> em, Set<String> selectedFields, Set<String> groupByFields) {
+		for (String f : groupByFields) {
+			if (!em.byColumn.containsKey(f)) {
+				throw new IllegalArgumentException("field '" + f + "' not found in entity " + em.type + " definition");
+			}
+		}
+		if (selectedFields != null && !selectedFields.isEmpty()) {
+			List<String> ill = new ArrayList<>();
+			for (String sf : selectedFields) {
+				if (!groupByFields.contains(sf)) {
+					ill.add(sf);
+				}
+			}
+			if (!ill.isEmpty()) {
+				throw new IllegalArgumentException("field/s [" + String.join(", ", ill) + "] is / are selected, but NOT found in the GROUP BY clause");
+			}
+		}
+	}
+
+	private void validateHavingClause(EntityMetaProc<ET> em, Set<String> fields) {
+		for (String f : fields) {
+			if (!em.byColumn.containsKey(f)) {
+				throw new IllegalArgumentException("field '" + f + "' not found in entity " + em.type + " definition");
+			}
+		}
+	}
+
+	private void validateOrderByClause(EntityMetaProc<ET> em, Set<String> groupByFields, Set<OrderByClause> orderByFields) {
+		for (OrderByClause obc : orderByFields) {
+			if (!em.byColumn.containsKey(obc.field)) {
+				throw new IllegalArgumentException("field '" + obc.field + "' not found in entity " + em.type + " definition");
+			}
+		}
+		if (groupByFields != null && !groupByFields.isEmpty()) {
+			List<String> ill = new ArrayList<>();
+			for (OrderByClause obc : orderByFields) {
+				if (!groupByFields.contains(obc.field)) {
+					ill.add(obc.field);
+				}
+			}
+			if (!ill.isEmpty()) {
+				throw new IllegalArgumentException("field/s [" + String.join(", ", ill) + "] is/are found in the ORDER BY clause, but NOT in the GROUP BY clause");
+			}
+		}
+	}
+
+	private String buildOrderByClause() {
+		return " ORDER BY " + orderBy.stream().map(OrderByClause::toString).collect(Collectors.joining(","));
+	}
+
+	private List<ET> translateDBRow(ResultSet rs) throws SQLException {
+		List<ET> result = new ArrayList<>();
 
 		try {
-			Constructor<T> ctor = config.em.type.getDeclaredConstructor();
+			Constructor<ET> ctor = config.em.type.getDeclaredConstructor();
 			while (rs.next()) {
-				T tmp = ctor.newInstance();
+				ET tmp = ctor.newInstance();
 				for (String f : selectedFields) {
 					FieldMetaProc fm = config.em.byColumn.get(f);
 					String colName = fm.columnName;

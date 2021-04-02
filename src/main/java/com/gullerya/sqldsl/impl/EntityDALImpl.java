@@ -22,38 +22,37 @@ public class EntityDALImpl<ET> implements EntityDAL<ET> {
 
 	@Override
 	public int delete() {
-		return new DeleteImpl<>(config).delete();
+		return new StatementDeleteImpl<>(config).delete();
 	}
 
 	@Override
 	public int delete(Where.WhereClause whereClause) {
-		return new DeleteImpl<>(config).delete(whereClause);
+		return new StatementDeleteImpl<>(config).delete(whereClause);
 	}
 
 	@Override
 	public int insert(ET entity, Literal... literals) {
-		return new InsertImpl<>(config).insert(entity, literals);
+		return new StatementInsertImpl<>(config).insert(entity, literals);
 	}
 
 	@Override
 	public int[] insert(Collection<ET> entities, Literal... literals) {
-		return new InsertImpl<>(config).insert(entities, literals);
+		return new StatementInsertImpl<>(config).insert(entities, literals);
 	}
 
 	@Override
 	public SelectDownstream<ET> select(String... fields) {
-		return new SelectImpl<>(config).select(fields);
+		return new StatementSelectImpl<>(config).select(fields);
 	}
 
 	@Override
 	public SelectDownstream<ET> select(Set<String> fields) {
-		return new SelectImpl<>(config).select(fields);
+		return new StatementSelectImpl<>(config).select(fields);
 	}
 
 	@Override
 	public UpdateDownstream update(ET entity, Literal... literals) {
-		// return new UpdateImpl<>(config).update(entity, literals);
-		return null;
+		return new UpdateImpl<>(config).update(entity, literals);
 	}
 
 	public static final class ESConfig<ET> {

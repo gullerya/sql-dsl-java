@@ -15,15 +15,15 @@ import java.util.Map.Entry;
 import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.statements.Insert;
 
-public class InsertImpl<T> implements Insert<T> {
-	private final EntityDALImpl.ESConfig<T> config;
+public class StatementInsertImpl<ET> implements Insert<ET> {
+	private final EntityDALImpl.ESConfig<ET> config;
 
-	InsertImpl(EntityDALImpl.ESConfig<T> config) {
+	StatementInsertImpl(EntityDALImpl.ESConfig<ET> config) {
 		this.config = config;
 	}
 
 	@Override
-	public int insert(T entity, Literal... literals) {
+	public int insert(ET entity, Literal... literals) {
 		if (entity == null) {
 			throw new IllegalArgumentException("inserted entity MUST NOT be NULL");
 		}
@@ -42,7 +42,7 @@ public class InsertImpl<T> implements Insert<T> {
 	}
 
 	@Override
-	public int[] insert(Collection<T> entities, Literal... literals) {
+	public int[] insert(Collection<ET> entities, Literal... literals) {
 		if (entities == null || entities.isEmpty()) {
 			throw new IllegalArgumentException("entities list MUST NOT be NULL nor EMPTY");
 		}
@@ -76,7 +76,7 @@ public class InsertImpl<T> implements Insert<T> {
 		return result;
 	}
 
-	private String buildInsertSet(T entity, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object>> params) {
+	private String buildInsertSet(ET entity, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object>> params) {
 		Set<String> nonNullSet = new LinkedHashSet<>();
 		for (Entry<String, FieldMetaProc> e : config.em.byColumn.entrySet()) {
 			String cName = e.getKey();
@@ -100,14 +100,14 @@ public class InsertImpl<T> implements Insert<T> {
 		return "INSERT INTO " + config.em.fqSchemaTableName + " (" + fields + ")" + " VALUES (" + values + ")";
 	}
 
-	private String buildInsertSet(Collection<T> entities, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object[]>> params) {
+	private String buildInsertSet(Collection<ET> entities, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object[]>> params) {
 		Map<String, Map.Entry<FieldMetaProc, Object[]>> nonNullSet = new LinkedHashMap<>();
 		for (FieldMetaProc fm : config.em.byColumn.values()) {
 			if (literals.containsKey(fm.columnName)) {
 				continue;
 			}
 			int i = 0;
-			for (T entity : entities) {
+			for (ET entity : entities) {
 				Object fv = fm.getFieldValue(entity);
 				if (fv != null) {
 					nonNullSet

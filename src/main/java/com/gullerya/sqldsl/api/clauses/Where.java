@@ -7,27 +7,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.gullerya.sqldsl.impl.EntityMetaProc;
-
 public interface Where<DS> {
 
 	DS where(WhereClause where);
-
-	/**
-	 * clause validator
-	 */
-	static <T> void validate(EntityMetaProc<T> em, WhereClause where) {
-		// if (where == null) {
-		// throw new IllegalArgumentException("where clause MUST NOT be NULL");
-		// }
-		// Collection<String> fields = where.collectFields();
-		// for (String f : fields) {
-		// if (!em.byColumn.containsKey(f)) {
-		// throw new IllegalArgumentException("field '" + f + "' not found in entity " +
-		// em.type + " definition");
-		// }
-		// }
-	}
 
 	final class WhereFieldValuePair {
 		public String column;
@@ -154,7 +136,7 @@ public interface Where<DS> {
 			this.operator = null;
 		}
 
-		Collection<String> collectFields() {
+		public Collection<String> collectFields() {
 			return collectFields(new ArrayList<>());
 		}
 

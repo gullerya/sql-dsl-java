@@ -6,10 +6,10 @@ import java.util.Collection;
 import com.gullerya.sqldsl.api.clauses.Where;
 import com.gullerya.sqldsl.api.statements.Delete;
 
-public class DeleteImpl<ET> implements Delete<ET> {
+public class StatementDeleteImpl<ET> implements Delete<ET> {
 	private final EntityDALImpl.ESConfig<ET> config;
 
-	DeleteImpl(EntityDALImpl.ESConfig<ET> config) {
+	StatementDeleteImpl(EntityDALImpl.ESConfig<ET> config) {
 		this.config = config;
 	}
 
@@ -20,7 +20,7 @@ public class DeleteImpl<ET> implements Delete<ET> {
 
 	@Override
 	public int delete(Where.WhereClause where) {
-		Where.validate(config.em, where);
+		validateWhereClause(config.em, where);
 		return internalDelete(where);
 	}
 
@@ -42,5 +42,17 @@ public class DeleteImpl<ET> implements Delete<ET> {
 			}
 			return s.executeUpdate();
 		});
+	}
+
+	private void validateWhereClause(EntityMetaProc<ET> em, Where.WhereClause where) {
+		if (where == null) {
+			throw new IllegalArgumentException("where clause MUST NOT be NULL");
+		}
+		Collection<String> fields = where.collectFields();
+		for (String f : fields) {
+			if (!em.byColumn.containsKey(f)) {
+				throw new IllegalArgumentException("field '" + f + "' not found in entity " + em.type + " definition");
+			}
+		}
 	}
 }
