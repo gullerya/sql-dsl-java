@@ -55,12 +55,12 @@
         <!--DEPLOY-->
         <nexus-url>https://oss.sonatype.org</nexus-url>
         <maven-gpg-plugin>1.6</maven-gpg-plugin>
-        <nexus-staging-maven-plugin.version>1.6.8</nexus-staging-maven-plugin.version>
+        <nexus-staging-maven-plugin>1.6.8</nexus-staging-maven-plugin>
 
         <!--QUALITY-->
         <skipTests>true</skipTests>
         <log4j-slf4j-impl>2.14.1</log4j-slf4j-impl>
-        <junit>4.13.2</junit>
+        <junit>5.8.0-M1</junit>
         <maven-surefire-plugin>3.0.0-M5</maven-surefire-plugin>
         <jacoco-maven-plugin>0.8.6</jacoco-maven-plugin>
         <spotbugs>4.2.2</spotbugs>
@@ -91,8 +91,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <artifactId>junit</artifactId>
-            <groupId>junit</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <groupId>org.junit.jupiter</groupId>
             <version>${junit}</version>
             <scope>test</scope>
         </dependency>
@@ -241,7 +241,7 @@
                     <version>${maven-javadoc-plugin}</version>
                     <configuration>
                         <encoding>UTF-8</encoding>
-                        <excludePackageNames>com.gullerya.typedsql.impl</excludePackageNames>
+                        <excludePackageNames>com.gullerya.sqldsl.impl</excludePackageNames>
                     </configuration>
                     <executions>
                         <execution>

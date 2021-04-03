@@ -1,5 +1,8 @@
 package com.gullerya.sqldsl;
 
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+
 import java.time.LocalDate;
 
 import javax.persistence.Column;
@@ -7,47 +10,66 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.sql.DataSource;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class EntityDALTest {
 	private static final String SCHEMA = "EntityDalTestsSchema";
 	private static final DataSource dataSource = DBUtils.getDataSource(SCHEMA);
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNegativeAllNulls() {
-		EntityDAL.of(null, null);
+		Assertions.assertThrows(
+				IllegalArgumentException.class,
+				() -> EntityDAL.of(null, null)
+		);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNegativeDSNull() {
-		EntityDAL.of(TestEntityA.class, null);
+		Assertions.assertThrows(
+				IllegalArgumentException.class,
+				() -> EntityDAL.of(TestEntityA.class, null)
+		);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNegativeEntityNotPublic() {
-		EntityDAL.of(TestEntityNotPublic.class, null);
+		Assertions.assertThrows(
+				IllegalArgumentException.class,
+				() -> EntityDAL.of(TestEntityNotPublic.class, null)
+		);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNegativeNotAnnotated() {
-		EntityDAL.of(TestEntityNotAnnotated.class, null);
+		Assertions.assertThrows(
+				IllegalArgumentException.class,
+				() -> EntityDAL.of(TestEntityNotAnnotated.class, null)
+		);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNegativeCTorNotPublic() {
-		EntityDAL.of(TestEntityCTorNotPublic.class, null);
+		Assertions.assertThrows(
+				IllegalArgumentException.class,
+				() -> EntityDAL.of(TestEntityCTorNotPublic.class, null)
+		);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testNegativeCTorHasParams() {
-		EntityDAL.of(TestEntityCTorHasParams.class, null);
+		Assertions.assertThrows(
+				IllegalArgumentException.class,
+				() -> EntityDAL.of(TestEntityCTorHasParams.class, null)
+		);
 	}
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void testNegativeNoColumns() {
-		EntityDAL.of(TestEntityNoColumns.class, dataSource);
+		Assertions.assertThrows(
+				IllegalStateException.class,
+				() -> EntityDAL.of(TestEntityNoColumns.class, dataSource)
+		);
 	}
 
 	@Test

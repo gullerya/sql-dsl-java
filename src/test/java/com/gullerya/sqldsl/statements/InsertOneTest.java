@@ -13,18 +13,19 @@ import com.gullerya.sqldsl.DBUtils;
 import com.gullerya.sqldsl.EntityDAL;
 
 import com.gullerya.sqldsl.api.clauses.Where;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class InsertTest {
+public class InsertOneTest {
 	private static final String SCHEMA = "InsertTestsSchema";
 	private static final String TEST_PRIVATE_TABLE = "TestPrivate";
 	private static final String TEST_PRIMITIVES_TABLE = "TestPrimitives";
 	private static final DataSource dataSource = DBUtils.getDataSource(SCHEMA);
 
-	@BeforeClass
+	@BeforeAll
 	static public void before() throws SQLException {
 		dataSource.getConnection()
 				.prepareStatement("CREATE TABLE \"" + SCHEMA + "\".\"" + TEST_PRIVATE_TABLE + "\" ("
@@ -39,10 +40,15 @@ public class InsertTest {
 				.execute();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void negativeA() {
-		EntityDAL<TestPrivateA> insertsDal = EntityDAL.of(TestPrivateA.class, dataSource);
-		insertsDal.insert((TestPrivateA) null);
+	@Test
+	public void negativeNullEntity() {
+		Assertions.assertThrows(
+				IllegalArgumentException.class,
+				() -> {
+					EntityDAL<TestPrivateA> insertsDal = EntityDAL.of(TestPrivateA.class, dataSource);
+					insertsDal.insert((TestPrivateA) null);
+				}
+		);
 	}
 
 	@Test
