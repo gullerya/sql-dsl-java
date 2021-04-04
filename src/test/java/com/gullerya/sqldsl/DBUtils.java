@@ -53,14 +53,20 @@ public class DBUtils {
 	private static DataSource ensureDataSource() {
 		String dbHost = System.getenv("DB_HOST");
 		String dbPort = System.getenv("DB_PORT");
+		String dbUser = System.getenv("DB_USER");
+		String dbPass = System.getenv("DB_PASS");
+		String dbDb = System.getenv("DB_DB");
 		if (dbHost == null) dbHost = "localhost";
 		if (dbPort == null) dbPort = "5432";
+		if (dbDb == null) dbDb = "sqldsltests";
 		if (dataSource == null) {
 			synchronized (DATASOURCE_LOCK) {
 				if (dataSource == null) {
 					HikariConfig config = new HikariConfig();
 					config.setDriverClassName("org.postgresql.Driver");
-					config.setJdbcUrl("jdbc:postgresql://" + dbHost + ":" + dbPort + "/sqldsltests");
+					config.setJdbcUrl("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbDb);
+					if (dbUser != null) config.setUsername(dbUser);
+					if (dbPass != null) config.setPassword(dbPass);
 					dataSource = new HikariDataSource(config);
 				}
 			}
