@@ -1,64 +1,86 @@
-// package com.gullerya.sqldsl.entities.test;
+package com.gullerya.sqldsl.clauses;
 
-// import org.junit.Test;
+import com.gullerya.sqldsl.DBUtils;
+import com.gullerya.sqldsl.EntityDAL;
+import com.gullerya.sqldsl.api.clauses.OrderBy;
+import org.junit.jupiter.api.Test;
 
-// import javax.persistence.Entity;
-// import javax.persistence.Table;
-// import javax.sql.DataSource;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.sql.DataSource;
 
-// import com.gullerya.sql._configuration.DataSourceProvider;
-// import com.gullerya.sql.entities.EntityField;
-// import com.gullerya.sql.entities.EntityService;
-// import com.gullerya.sql.entities.OrderBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-// public class OrderByTest {
-// 	private final DataSource dataSource = DataSourceProvider.getInstance().getDataSourceDetails().getDataSource();
+public class OrderByTest {
+	private final DataSource dataSource = DBUtils.getDataSource();
 
-// 	@Test(expected = IllegalArgumentException.class)
-// 	public void negativeA1() {
-// 		OrderBy.asc(null);
-// 	}
+	@Test
+	public void negativeA1() {
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> OrderBy.asc(null)
+		);
+	}
 
-// 	@Test(expected = IllegalArgumentException.class)
-// 	public void negativeA2() {
-// 		OrderBy.asc("");
-// 	}
+	@Test
+	public void negativeA2() {
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> OrderBy.asc("")
+		);
+	}
 
-// 	@Test(expected = IllegalArgumentException.class)
-// 	public void negativeA3() {
-// 		OrderBy.desc(null);
-// 	}
+	@Test
+	public void negativeA3() {
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> OrderBy.desc(null)
+		);
+	}
 
-// 	@Test(expected = IllegalArgumentException.class)
-// 	public void negativeA4() {
-// 		OrderBy.desc("");
-// 	}
+	@Test
+	public void negativeA4() {
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> OrderBy.desc("")
+		);
+	}
 
-// 	@Test(expected = IllegalArgumentException.class)
-// 	public void negativeB1() {
-// 		EntityDAL.of(TestEnt.class, dataSource).select("some")
-// 				.orderBy(null);
-// 	}
+	@Test
+	public void negativeB1() {
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> EntityDAL.of(TestEnt.class, dataSource).select("some")
+						.orderBy(null)
+		);
+	}
 
-// 	@Test(expected = IllegalArgumentException.class)
-// 	public void negativeB2() {
-// 		EntityDAL.of(TestEnt.class, dataSource).select("some")
-// 				.orderBy(OrderBy.asc("none"));
-// 	}
+	@Test
+	public void negativeB2() {
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> EntityDAL.of(TestEnt.class, dataSource).select("some")
+						.orderBy(OrderBy.asc("none"))
+		);
+	}
 
-// 	@Test(expected = IllegalArgumentException.class)
-// 	public void negativeB3() {
-// 		EntityDAL.of(TestEnt.class, dataSource).select("some")
-// 				.groupBy("some")
-// 				.orderBy(OrderBy.asc("id"));
-// 	}
+	@Test
+	public void negativeB3() {
+		assertThrows(
+				IllegalArgumentException.class,
+				() -> EntityDAL.of(TestEnt.class, dataSource).select("some")
+						.groupBy("some")
+						.orderBy(OrderBy.asc("id"))
+		);
+	}
 
-// 	@Entity
-// 	@Table(name = "some")
-// 	public static class TestEnt {
-// 		@EntityField("id")
-// 		public String id;
-// 		@EntityField("some")
-// 		public String some;
-// 	}
-// }
+	@Entity
+	@Table(name = "some")
+	public static class TestEnt {
+		@Column
+		public String id;
+		@Column
+		public String some;
+	}
+}
