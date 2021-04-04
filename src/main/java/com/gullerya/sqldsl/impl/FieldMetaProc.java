@@ -58,50 +58,16 @@ class FieldMetaProc {
 	Object getColumnValue(ResultSet rs, String columnName) throws SQLException {
 		Object result;
 
+		Class<?> targetType = fieldType;
 		if (converter != null) {
-			Optional<ParameterizedType> pt = Arrays.stream(converter.getClass().getGenericInterfaces())
-					.filter(i -> i instanceof ParameterizedType)
-					.map(i -> (ParameterizedType) i)
-					.filter(i -> i.getRawType().getTypeName().startsWith(AttributeConverter.class.getTypeName()))
-					.findFirst();
-			if (pt.isPresent()) {
-				result = converter.convertToEntityAttribute(rs.getObject(columnName, (Class<?>) pt.get().getActualTypeArguments()[0]));
-			} else {
-				result = converter.convertToEntityAttribute(rs.getObject(columnName));
-			}
-			result = converter.convertToEntityAttribute(result);
-		} else {
-			if (fieldType.isArray()) {
-				result = rs.getBytes(columnName);
-			} else if (InputStream.class.isAssignableFrom(fieldType)) {
-				try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
-					rs.getBinaryStream(columnName).transferTo(baos);
-					result = new ByteArrayInputStream(baos.toByteArray());
-				} catch (IOException ioe) {
-					throw new IllegalStateException("failed to process data stream for '" + columnName + "'");
-				}
-			} else if (fieldType == char.class || fieldType == Character.class) {
-				result = rs.getString(columnName).charAt(0);
-			} else if (fieldType == String.class) {
-				result = rs.getString(columnName);
-			} else if (fieldType == boolean.class || fieldType == Boolean.class) {
-				result = rs.getBoolean(columnName);
-			} else if (fieldType == byte.class || fieldType == Byte.class) {
-				result = rs.getByte(columnName);
-			} else if (fieldType == short.class || fieldType == Short.class) {
-				result = rs.getShort(columnName);
-			} else if (fieldType == int.class || fieldType == Integer.class) {
-				result = rs.getInt(columnName);
-			} else if (fieldType == long.class || fieldType == Long.class) {
-				result = rs.getLong(columnName);
-			} else if (fieldType == float.class || fieldType == Float.class) {
-				result = rs.getFloat(columnName);
-			} else if (fieldType == double.class || fieldType == Double.class) {
-				result = rs.getDouble(columnName);
-			} else {
-				result = rs.getObject(columnName, fieldType);
-			}
+			targetType = obtainConverterTargetType(converter);
 		}
+
+		result = extractColumnValueByTargetType(rs, columnName, targetType);
+		if (converter != null) {
+			result = converter.convertToEntityAttribute(result);
+		}
+
 		return result;
 	}
 
@@ -123,7 +89,7 @@ class FieldMetaProc {
 		return converter != null ? converter.convertToDatabaseColumn(field) : field;
 	}
 
-	private String obtainColumnName(Field field, Column column) {
+	private static String obtainColumnName(Field field, Column column) {
 		String result = column.name();
 		if (result.isEmpty()) {
 			result = field.getName();
@@ -132,9 +98,9 @@ class FieldMetaProc {
 	}
 
 	@SuppressWarnings("unchecked")
-	private AttributeConverter<Object, Object> obtainConverter(Field field) throws ReflectiveOperationException {
+	private static AttributeConverter<Object, Object> obtainConverter(Field f) throws ReflectiveOperationException {
 		AttributeConverter<Object, Object> result = null;
-		Convert convert = field.getAnnotation(Convert.class);
+		Convert convert = f.getAnnotation(Convert.class);
 		if (convert != null && !convert.disableConversion()) {
 			Class<AttributeConverter<Object, Object>> converterClass = convert.converter();
 			if (!AttributeConverter.class.isAssignableFrom(converterClass)) {
@@ -145,7 +111,53 @@ class FieldMetaProc {
 		return result;
 	}
 
-//	private Object getColumnValueByType(ResultSet rs, String columnName) throws SQLException {
+	private static Class<?> obtainConverterTargetType(AttributeConverter<?, ?> c) {
+		Class<?> result = null;
+		Optional<ParameterizedType> pt = Arrays.stream(c.getClass().getGenericInterfaces())
+				.filter(i -> i instanceof ParameterizedType)
+				.map(i -> (ParameterizedType) i)
+				.filter(i -> i.getRawType().getTypeName().startsWith(AttributeConverter.class.getTypeName()))
+				.findFirst();
+		if (pt.isPresent()) {
+			result = (Class<?>) pt.get().getActualTypeArguments()[1];
+		}
+		return result;
+	}
+
+	private static Object extractColumnValueByTargetType(ResultSet rs, String cn, Class<?> tt) throws SQLException {
+		Object result;
+		if (tt.isArray()) {
+			result = rs.getBytes(cn);
+		} else if (InputStream.class.isAssignableFrom(tt)) {
+			try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+				rs.getBinaryStream(cn).transferTo(baos);
+				result = new ByteArrayInputStream(baos.toByteArray());
+			} catch (IOException ioe) {
+				throw new IllegalStateException("failed to process data stream for '" + cn + "'");
+			}
+		} else if (tt == char.class || tt == Character.class) {
+			result = rs.getString(cn).charAt(0);
+		} else if (tt == boolean.class || tt == Boolean.class) {
+			result = rs.getBoolean(cn);
+		} else if (tt == byte.class || tt == Byte.class) {
+			result = rs.getByte(cn);
+		} else if (tt == short.class || tt == Short.class) {
+			result = rs.getShort(cn);
+		} else if (tt == int.class || tt == Integer.class) {
+			result = rs.getInt(cn);
+		} else if (tt == long.class || tt == Long.class) {
+			result = rs.getLong(cn);
+		} else if (tt == float.class || tt == Float.class) {
+			result = rs.getFloat(cn);
+		} else if (tt == double.class || tt == Double.class) {
+			result = rs.getDouble(cn);
+		} else {
+			result = rs.getObject(cn, tt);
+		}
+		return result;
+	}
+
+//	private Object getColumnValueByDBType(ResultSet rs, String columnName) throws SQLException {
 //		Object result;
 //		int columnIndex = rs.findColumn(columnName);
 //		int columnType = rs.getMetaData().getColumnType(columnIndex);
