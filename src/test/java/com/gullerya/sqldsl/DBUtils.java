@@ -1,6 +1,7 @@
 package com.gullerya.sqldsl;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -35,10 +36,11 @@ public class DBUtils {
 			synchronized (SCHEMA_LOCK) {
 				if (!schemas.containsKey(schema)) {
 					try (Connection c = result.getConnection(); Statement s = c.createStatement()) {
-						System.out.println("preparing schema " + schema + "...");
+						System.out.println("preparing schema '" + schema + "'...");
+						s.execute("DROP SCHEMA IF EXISTS \"" + schema + "\" CASCADE");
 						s.execute("CREATE SCHEMA \"" + schema + "\"");
 						schemas.put(schema, true);
-						System.out.println("... schema " + schema + " is ready");
+						System.out.println("... schema '" + schema + "' is ready");
 					} catch (SQLException sqle) {
 						throw new IllegalStateException("failed to create scheme '" + schema + "'", sqle);
 					}
@@ -54,8 +56,8 @@ public class DBUtils {
 			synchronized (DATASOURCE_LOCK) {
 				if (dataSource == null) {
 					HikariConfig config = new HikariConfig();
-					config.setDriverClassName("org.apache.derby.jdbc.EmbeddedDriver");
-					config.setJdbcUrl("jdbc:derby:memory:TestsDB;create=true");
+					config.setDriverClassName("org.postgresql.Driver");
+					config.setJdbcUrl("jdbc:postgresql://localhost:5432/sqldsltests");
 					dataSource = new HikariDataSource(config);
 				}
 			}

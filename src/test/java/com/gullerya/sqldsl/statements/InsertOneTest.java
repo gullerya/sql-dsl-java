@@ -28,15 +28,19 @@ public class InsertOneTest {
 	@BeforeAll
 	static public void before() throws SQLException {
 		dataSource.getConnection()
-				.prepareStatement("CREATE TABLE \"" + SCHEMA + "\".\"" + TEST_PRIVATE_TABLE + "\" ("
-						+ "firstName VARCHAR(32), lastName VARCHAR(32), bdate DATE, active BOOLEAN, "
-						+ "children INT, height DECIMAL(15,4))")
+				.prepareStatement(
+						"DROP TABLE IF EXISTS \"" + SCHEMA + "\".\"" + TEST_PRIVATE_TABLE + "\";" +
+								"CREATE TABLE \"" + SCHEMA + "\".\"" + TEST_PRIVATE_TABLE + "\" ("
+								+ "firstName VARCHAR(32), lastName VARCHAR(32), bdate DATE, active BOOLEAN, "
+								+ "children INT, height DECIMAL(15,4))")
 				.execute();
 
 		dataSource.getConnection()
-				.prepareStatement("CREATE TABLE \"" + SCHEMA + "\".\"" + TEST_PRIMITIVES_TABLE + "\" ("
-						+ "name VARCHAR(32), active BOOLEAN, "
-						+ "children INT, height DECIMAL(15,4))")
+				.prepareStatement(
+						"DROP TABLE IF EXISTS \"" + SCHEMA + "\".\"" + TEST_PRIMITIVES_TABLE + "\";" +
+								"CREATE TABLE \"" + SCHEMA + "\".\"" + TEST_PRIMITIVES_TABLE + "\" ("
+								+ "name VARCHAR(32), active BOOLEAN, "
+								+ "children INT, height DECIMAL(15,4))")
 				.execute();
 	}
 

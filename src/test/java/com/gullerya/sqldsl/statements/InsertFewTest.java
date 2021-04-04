@@ -29,13 +29,17 @@ public class InsertFewTest {
 	@BeforeAll
 	static public void before() throws SQLException {
 		dataSource.getConnection()
-				.prepareStatement("CREATE TABLE \"" + SCHEMA + "\".\"" + TEST_PRIVATE_TABLE + "\" ("
-						+ "firstName VARCHAR(32), lastName VARCHAR(32), bdate DATE, active BOOLEAN, "
-						+ "children INT, height DECIMAL(15,4))")
+				.prepareStatement(
+						"DROP TABLE IF EXISTS \"" + SCHEMA + "\".\"" + TEST_PRIVATE_TABLE + "\";" +
+								"CREATE TABLE \"" + SCHEMA + "\".\"" + TEST_PRIVATE_TABLE + "\" ("
+								+ "firstName VARCHAR(32), lastName VARCHAR(32), bdate DATE, active BOOLEAN, "
+								+ "children INT, height DECIMAL(15,4))")
 				.execute();
 
 		dataSource.getConnection()
-				.prepareStatement("CREATE TABLE \"" + SCHEMA + "\".\"" + TEST_PRIMITIVES_TABLE + "\" ("
+				.prepareStatement(
+						"DROP TABLE IF EXISTS \"" + SCHEMA + "\".\"" + TEST_PRIMITIVES_TABLE + "\";" +
+								"CREATE TABLE \"" + SCHEMA + "\".\"" + TEST_PRIMITIVES_TABLE + "\" ("
 						+ "name VARCHAR(32), active BOOLEAN, b SMALLINT, s SMALLINT, "
 						+ "children INT, l BIGINT, f FLOAT, height DECIMAL(15,4))")
 				.execute();
@@ -169,10 +173,10 @@ public class InsertFewTest {
 	public static class TestPrimitivesA {
 
 		@Column(length = 10)
-		private String name;
+		public String name;
 
 		@Column
-		private boolean active;
+		public boolean active;
 
 		@Column
 		private byte b;

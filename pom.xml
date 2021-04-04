@@ -61,12 +61,11 @@
         <skipTests>true</skipTests>
         <log4j-slf4j-impl>2.14.1</log4j-slf4j-impl>
         <junit>5.8.0-M1</junit>
+        <spotbugs>4.2.2</spotbugs>
         <maven-surefire-plugin>3.0.0-M5</maven-surefire-plugin>
         <jacoco-maven-plugin>0.8.6</jacoco-maven-plugin>
-        <spotbugs>4.2.2</spotbugs>
-        <hikaricp>4.0.3</hikaricp>
-        <apache-derby>10.15.2.0</apache-derby>
         <sql-maven-plugin>1.5</sql-maven-plugin>
+        <hikaricp>4.0.3</hikaricp>
         <mssql-jdbc>9.2.1.jre11</mssql-jdbc>
         <postgresql>42.2.19</postgresql>
     </properties>
@@ -100,18 +99,6 @@
             <artifactId>HikariCP</artifactId>
             <groupId>com.zaxxer</groupId>
             <version>${hikaricp}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <artifactId>derby</artifactId>
-            <groupId>org.apache.derby</groupId>
-            <version>${apache-derby}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derbytools</artifactId>
-            <version>${apache-derby}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
