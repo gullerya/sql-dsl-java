@@ -13,7 +13,6 @@ import javax.persistence.Table;
 public class EntityMetaProc<T> {
 	final Class<T> type;
 	final String fqSchemaTableName;
-	final Map<String, FieldMetaProc> byFName;
 	final Map<String, FieldMetaProc> byColumn;
 
 	EntityMetaProc(Class<T> et) throws ReflectiveOperationException {
@@ -42,8 +41,6 @@ public class EntityMetaProc<T> {
 		if (tmpByField.isEmpty()) {
 			throw new IllegalArgumentException("entity type MUST have at least 1 fields annotated with '" + Column.class + "', " + et + " isn't");
 		}
-		byFName = tmpByField.entrySet().stream().sorted(Map.Entry.comparingByKey())
-				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 		byColumn = tmpByColumn.entrySet().stream().sorted(Map.Entry.comparingByKey())
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
