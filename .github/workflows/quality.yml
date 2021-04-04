@@ -10,6 +10,8 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -38,7 +40,7 @@ jobs:
       - name: Test
         env:
           DB_TYPE: postgresql
-          DB_HOST: postgres
+          DB_HOST: localhost
           DB_PORT: 5432
         run: mvn --batch-mode --update-snapshots verify -DskipTests=false -Pcoverage
 
