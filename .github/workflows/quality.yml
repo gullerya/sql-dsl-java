@@ -5,6 +5,16 @@ on: [push]
 jobs:
   build-verify:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout
@@ -26,6 +36,10 @@ jobs:
         run: mvn spotbugs:check
 
       - name: Test
+        env:
+          DB_TYPE: postgresql
+          DB_HOST: postgres
+          DB_PORT: 5432
         run: mvn --batch-mode --update-snapshots verify -DskipTests=false -Pcoverage
 
       - uses: codecov/codecov-action@v1
