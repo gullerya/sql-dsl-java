@@ -3,7 +3,7 @@ name: Quality
 on: [push]
 
 jobs:
-  build-verify:
+  build-verify-jdk11-postgres:
     runs-on: ubuntu-latest
     services:
       postgres:
