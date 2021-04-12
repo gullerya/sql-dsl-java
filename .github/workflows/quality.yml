@@ -8,7 +8,7 @@ jobs:
 
     steps:
       - name: Setup postgresql
-        uses: gullerya/db-setup-action
+        uses: gullerya/db-setup-action@0.0.1
         with:
           image: 'postgres:alpine'
           port: 5432
