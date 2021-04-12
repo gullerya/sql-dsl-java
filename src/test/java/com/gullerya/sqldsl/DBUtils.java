@@ -64,8 +64,12 @@ public class DBUtils {
 					HikariConfig config = new HikariConfig();
 					config.setDriverClassName("org.postgresql.Driver");
 					config.setJdbcUrl("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbDb);
+//					config.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+//					config.setJdbcUrl("jdbc:sqlserver://localhost:1433;databaseName=" + dbDb);
 					if (dbUser != null) config.setUsername(dbUser);
 					if (dbPass != null) config.setPassword(dbPass);
+//					config.setUsername("sa");
+//					config.setPassword("Sa_PassW0rd");
 					dataSource = new HikariDataSource(config);
 				}
 			}

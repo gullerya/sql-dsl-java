@@ -5,22 +5,17 @@ on: [push]
 jobs:
   build-verify-jdk11-postgres:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: sqldsltests
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
+      - name: Setup postgresql
+        uses: actions/db-setup-action
+        with:
+          image: 'postgres:alpine'
+          port: 5432
+          username: postgres
+          password: postgres
+          database: sqldsltests
+
       - name: Checkout
         uses: actions/checkout@v2
 
