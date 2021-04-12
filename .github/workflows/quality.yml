@@ -5,16 +5,21 @@ on: [push]
 jobs:
   build-verify-jdk11-postgres:
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASS: postgres
+      POSTGRES_DB: sqldsltests
 
     steps:
-      - name: Setup postgresql
-        uses: gullerya/db-setup-action@0.0.1
+      - name: Setup PostgreSQL
+        uses: gullerya/db-setup-action@v1
         with:
           image: 'postgres:alpine'
-          port: 5432
-          username: postgres
-          password: postgres
-          database: sqldsltests
+          port: ${{ env.POSTGRES_PORT }}
+          username: ${{ env.POSTGRES_USER }}
+          password: ${{ env.POSTGRES_PASS }}
+          database: ${{ env.POSTGRES_DB }}
 
       - name: Checkout
         uses: actions/checkout@v2
@@ -38,10 +43,10 @@ jobs:
         env:
           DB_TYPE: postgresql
           DB_HOST: localhost
-          DB_PORT: 5432
-          DB_USER: postgres
-          DB_PASS: postgres
-          DB_DB: sqldsltests
+          DB_PORT: ${{ env.POSTGRES_PORT }}
+          DB_USER: ${{ env.POSTGRES_USER }}
+          DB_PASS: ${{ env.POSTGRES_PASS }}
+          DB_DB: ${{ env.POSTGRES_DB }}
         run: mvn --batch-mode --update-snapshots verify -DskipTests=false -Pcoverage
 
       - uses: codecov/codecov-action@v1
