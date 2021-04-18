@@ -12,15 +12,6 @@ jobs:
       POSTGRES_DB: sqldsltests
 
     steps:
-      - name: Setup PostgreSQL
-        uses: gullerya/db-setup-action@v1.1.0
-        with:
-          image: 'postgres:alpine'
-          port: ${{ env.POSTGRES_PORT }}
-          username: ${{ env.POSTGRES_USER }}
-          password: ${{ env.POSTGRES_PASS }}
-          database: ${{ env.POSTGRES_DB }}
-
       - name: Checkout
         uses: actions/checkout@v2
 
@@ -38,6 +29,15 @@ jobs:
 
       - name: Spotbugs
         run: mvn spotbugs:check
+
+      - name: Setup PostgreSQL
+        uses: gullerya/db-setup-action@v1.2.0
+        with:
+          image: 'postgres:alpine'
+          port: ${{ env.POSTGRES_PORT }}
+          username: ${{ env.POSTGRES_USER }}
+          password: ${{ env.POSTGRES_PASS }}
+          database: ${{ env.POSTGRES_DB }}
 
       - name: Test
         env:
