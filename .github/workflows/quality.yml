@@ -31,7 +31,7 @@ jobs:
         run: mvn spotbugs:check
 
       - name: Setup PostgreSQL
-        uses: gullerya/db-setup-action@v1.1.0
+        uses: gullerya/db-setup-action@v1.1.1
         with:
           image: 'postgres:alpine'
           port: ${{ env.POSTGRES_PORT }}
