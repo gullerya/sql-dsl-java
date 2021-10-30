@@ -63,7 +63,7 @@
         <junit>5.8.0-M1</junit>
         <spotbugs>4.4.2</spotbugs>
         <maven-surefire-plugin>3.0.0-M5</maven-surefire-plugin>
-        <jacoco-maven-plugin>0.8.6</jacoco-maven-plugin>
+        <jacoco-maven-plugin>0.8.7</jacoco-maven-plugin>
         <sql-maven-plugin>1.5</sql-maven-plugin>
         <hikaricp>5.0.0</hikaricp>
         <mssql-jdbc>9.4.0.jre16</mssql-jdbc>
