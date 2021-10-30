@@ -1,9 +1,15 @@
 name: Quality
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
-  build-verify-jdk11-postgres:
+  build-verify:
     runs-on: ubuntu-latest
     env:
       POSTGRES_PORT: 5432
@@ -15,10 +21,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Set up JDK 11
+      - name: Set up JDK 17
         uses: actions/setup-java@v1
         with:
-          java-version: 11
+          java-version: 17
 
       - name: Cache Maven packages
         uses: actions/cache@v2

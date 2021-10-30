@@ -61,13 +61,13 @@
         <skipTests>true</skipTests>
         <log4j-slf4j-impl>2.14.1</log4j-slf4j-impl>
         <junit>5.8.0-M1</junit>
-        <spotbugs>4.2.2</spotbugs>
+        <spotbugs>4.4.2</spotbugs>
         <maven-surefire-plugin>3.0.0-M5</maven-surefire-plugin>
         <jacoco-maven-plugin>0.8.6</jacoco-maven-plugin>
         <sql-maven-plugin>1.5</sql-maven-plugin>
-        <hikaricp>4.0.3</hikaricp>
-        <mssql-jdbc>9.2.1.jre11</mssql-jdbc>
-        <postgresql>42.2.19</postgresql>
+        <hikaricp>5.0.0</hikaricp>
+        <mssql-jdbc>9.4.0.jre16</mssql-jdbc>
+        <postgresql>42.3.1</postgresql>
     </properties>
 
     <dependencies>
