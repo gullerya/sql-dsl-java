@@ -103,8 +103,8 @@ class StatementUpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
 			}
 			if (where != null) {
 				for (Where.WhereFieldValuePair parameter : parametersCollector) {
-					FieldMetaProc fm = config.em().byColumn.get(parameter.column);
-					fm.setColumnValue(s, ++i, parameter.value);
+					FieldMetaProc fm = config.em().byColumn.get(parameter.column());
+					fm.setColumnValue(s, ++i, parameter.value());
 				}
 			}
 			return s.executeUpdate();

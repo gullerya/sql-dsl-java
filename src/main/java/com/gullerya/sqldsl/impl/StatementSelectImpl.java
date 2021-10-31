@@ -160,8 +160,8 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 			int i = 0;
 			for (WhereFieldValuePair parameter : parametersCollector) {
 				i++;
-				FieldMetaProc fm = config.em().byColumn.get(parameter.column);
-				Object pv = fm.translateFieldToColumn(parameter.value);
+				FieldMetaProc fm = config.em().byColumn.get(parameter.column());
+				Object pv = fm.translateFieldToColumn(parameter.value());
 				s.setObject(i, pv);
 			}
 			try (ResultSet rs = s.executeQuery()) {
