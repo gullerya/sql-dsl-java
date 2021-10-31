@@ -14,7 +14,7 @@ public record StatementDeleteImpl<T>(EntityDALImpl.ESConfig<T> config) implement
 	}
 
 	@Override
-	public int deleteAll(Where.WhereClause where) {
+	public int delete(Where.WhereClause where) {
 		validateWhereClause(config.em(), where);
 		return internalDelete(where);
 	}

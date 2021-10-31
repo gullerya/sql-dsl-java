@@ -11,10 +11,6 @@ import javax.sql.DataSource;
 import com.gullerya.sqldsl.EntityDAL;
 import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.clauses.Where;
-import com.gullerya.sqldsl.api.statements.Delete;
-import com.gullerya.sqldsl.api.statements.Insert;
-import com.gullerya.sqldsl.api.statements.Select;
-import com.gullerya.sqldsl.api.statements.Update;
 
 public class EntityDALImpl<T> implements EntityDAL<T> {
 	private final ESConfig<T> config;
@@ -30,8 +26,8 @@ public class EntityDALImpl<T> implements EntityDAL<T> {
 	}
 
 	@Override
-	public int deleteAll(Where.WhereClause whereClause) {
-		return new StatementDeleteImpl<>(config).deleteAll(whereClause);
+	public int delete(Where.WhereClause whereClause) {
+		return new StatementDeleteImpl<>(config).delete(whereClause);
 	}
 
 	@Override

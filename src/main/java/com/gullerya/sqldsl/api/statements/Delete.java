@@ -17,5 +17,5 @@ public interface Delete<T> {
 	 * @param whereClause where clause; MUST NOT be NULL
 	 * @return number of affected rows
 	 */
-	int deleteAll(Where.WhereClause whereClause);
+	int delete(Where.WhereClause whereClause);
 }
