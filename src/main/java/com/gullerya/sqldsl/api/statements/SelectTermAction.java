@@ -21,20 +21,20 @@ interface SelectTermAction<T> {
 	List<T> readAll();
 
 	/**
-	 * read all entities matching query, if any
+	 * read a limited number of entities matching query, if any
 	 * - no offset applied
 	 *
 	 * @param limit limit number; MUST be greater than 0
 	 * @return list of entities; MAY be an EMPTY list; MAY NOT be NULL
 	 */
-	List<T> readAll(int limit);
+	List<T> read(int limit);
 
 	/**
-	 * read all entities matching query, if any
+	 * read a limited number of entities matching query, if any
 	 *
 	 * @param offset offset number; MUST be greater than 0
 	 * @param limit  limit number; MUST be greater than 0
 	 * @return list of entities; MAY be an EMPTY list; MAY NOT be NULL
 	 */
-	List<T> readAll(int offset, int limit);
+	List<T> read(int offset, int limit);
 }
