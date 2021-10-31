@@ -8,17 +8,17 @@
     <groupId>com.gullerya</groupId>
     <version>1.0-SNAPSHOT</version>
 
-    <name>SQL DSL (Java)</name>
+    <name>SQL DSL</name>
     <description>
-        SQL queries builder and executor, implemented in Java. Featured by strongly typed validations, simplicity of
-        use.
+        SQL queries builder and executor.
+        JPA standard annotations compliant, featured by strongly typed validations, very simple to use.
     </description>
     <url>https://github.com/gullerya/sql-dsl-java</url>
 
     <licenses>
         <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <name>ISC License</name>
+            <url>https://opensource.org/licenses/ISC</url>
         </license>
     </licenses>
 
