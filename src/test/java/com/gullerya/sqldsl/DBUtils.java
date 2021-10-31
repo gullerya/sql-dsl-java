@@ -16,7 +16,7 @@ public class DBUtils {
 	private static final Object DATASOURCE_LOCK = new Object();
 	private static final Object SCHEMA_LOCK = new Object();
 
-	private static DataSource dataSource;
+	private static volatile DataSource dataSource;
 	private static final Map<String, Boolean> schemas = new HashMap<>();
 
 	public static final String DEFAULT_TESTS_SCHEMA = "DalTests";
@@ -51,13 +51,20 @@ public class DBUtils {
 
 	private static DataSource ensureDataSource() {
 		String dbHost = System.getenv("DB_HOST");
+		dbHost = dbHost == null ? "localhost" : dbHost;
+
 		String dbPort = System.getenv("DB_PORT");
+		dbPort = dbPort == null ? "5432" : dbPort;
+
 		String dbUser = System.getenv("DB_USER");
+		dbUser = dbUser == null ? "postgres" : dbUser;
+
 		String dbPass = System.getenv("DB_PASS");
+		dbPass = dbPass == null ? "postgres" : dbPass;
+
 		String dbDb = System.getenv("DB_DB");
-		if (dbHost == null) dbHost = "localhost";
-		if (dbPort == null) dbPort = "5432";
-		if (dbDb == null) dbDb = "sqldsltests";
+		dbDb = dbDb == null ? "sqldsltests" : dbDb;
+
 		if (dataSource == null) {
 			synchronized (DATASOURCE_LOCK) {
 				if (dataSource == null) {
@@ -66,10 +73,8 @@ public class DBUtils {
 					config.setJdbcUrl("jdbc:postgresql://" + dbHost + ":" + dbPort + "/" + dbDb);
 //					config.setDriverClassName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 //					config.setJdbcUrl("jdbc:sqlserver://localhost:1433;databaseName=" + dbDb);
-					if (dbUser != null) config.setUsername(dbUser);
-					if (dbPass != null) config.setPassword(dbPass);
-//					config.setUsername("sa");
-//					config.setPassword("Sa_PassW0rd");
+					config.setUsername(dbUser);
+					config.setPassword(dbPass);
 					dataSource = new HikariDataSource(config);
 				}
 			}
