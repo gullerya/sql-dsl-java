@@ -38,7 +38,7 @@ public class GroupByTest {
 
 	@Test
 	public void testGroupByOne() {
-		es.delete();
+		es.deleteAll();
 
 		List<Book> usersToInsert = new ArrayList<>();
 		usersToInsert.add(new Book(1000L, "SamA", BigDecimal.valueOf(2.4)));
@@ -52,7 +52,7 @@ public class GroupByTest {
 		List<Book> users = es.select("author")
 				.groupBy("author")
 				.orderBy(OrderBy.asc("author"))
-				.read();
+				.readAll();
 
 		assertNotNull(users);
 		assertEquals(3, users.size());
@@ -63,7 +63,7 @@ public class GroupByTest {
 
 	@Test
 	public void testGroupByManyA() {
-		es.delete();
+		es.deleteAll();
 
 		List<Book> usersToInsert = new ArrayList<>();
 		usersToInsert.add(new Book(2000L, "SamA", BigDecimal.valueOf(2.4)));
@@ -77,7 +77,7 @@ public class GroupByTest {
 		List<Book> users = es.select("author", "price")
 				.groupBy("author", "price")
 				.orderBy(OrderBy.asc("author"), OrderBy.desc("price"))
-				.read();
+				.readAll();
 
 		assertNotNull(users);
 		assertEquals(4, users.size());
@@ -93,7 +93,7 @@ public class GroupByTest {
 
 	@Test
 	public void testGroupByManyB() {
-		es.delete();
+		es.deleteAll();
 
 		List<Book> usersToInsert = new ArrayList<>();
 		usersToInsert.add(new Book(2000L, "SamA", BigDecimal.valueOf(2.4)));
@@ -107,7 +107,7 @@ public class GroupByTest {
 		List<Book> users = es.select("price", "author")
 				.groupBy("price", "author")
 				.orderBy(OrderBy.desc("author"), OrderBy.asc("price"))
-				.read();
+				.readAll();
 
 		assertNotNull(users);
 		assertEquals(3, users.size());

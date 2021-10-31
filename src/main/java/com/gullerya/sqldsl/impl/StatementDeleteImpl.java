@@ -9,12 +9,12 @@ import com.gullerya.sqldsl.api.statements.Delete;
 public record StatementDeleteImpl<T>(EntityDALImpl.ESConfig<T> config) implements Delete<T> {
 
 	@Override
-	public int delete() {
+	public int deleteAll() {
 		return internalDelete(null);
 	}
 
 	@Override
-	public int delete(Where.WhereClause where) {
+	public int deleteAll(Where.WhereClause where) {
 		validateWhereClause(config.em(), where);
 		return internalDelete(where);
 	}

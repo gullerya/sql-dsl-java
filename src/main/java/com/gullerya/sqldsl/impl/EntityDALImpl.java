@@ -17,53 +17,46 @@ import com.gullerya.sqldsl.api.statements.Select;
 import com.gullerya.sqldsl.api.statements.Update;
 
 public class EntityDALImpl<T> implements EntityDAL<T> {
-	private final Delete<T> stmntDelete;
-	private final Insert<T> stmntInsert;
-	private final Select<T> stmntSelect;
-	private final Update<T> stmntUpdate;
+	private final ESConfig<T> config;
 
 	public EntityDALImpl(Class<T> entityType, DataSource ds) throws ReflectiveOperationException {
 		EntityMetaProc<T> em = new EntityMetaProc<>(entityType);
-		ESConfig<T> config = new ESConfig<>(ds, em);
-		stmntDelete = new StatementDeleteImpl<>(config);
-		stmntInsert = new StatementInsertImpl<>(config);
-		stmntSelect = new StatementSelectImpl<>(config);
-		stmntUpdate = new StatementUpdateImpl<>(config);
+		this.config = new ESConfig<>(ds, em);
 	}
 
 	@Override
-	public int delete() {
-		return stmntDelete.delete();
+	public int deleteAll() {
+		return new StatementDeleteImpl<>(config).deleteAll();
 	}
 
 	@Override
-	public int delete(Where.WhereClause whereClause) {
-		return stmntDelete.delete(whereClause);
+	public int deleteAll(Where.WhereClause whereClause) {
+		return new StatementDeleteImpl<>(config).deleteAll(whereClause);
 	}
 
 	@Override
 	public int insert(T entity, Literal... literals) {
-		return stmntInsert.insert(entity, literals);
+		return new StatementInsertImpl<>(config).insert(entity, literals);
 	}
 
 	@Override
 	public int[] insert(Collection<T> entities, Literal... literals) {
-		return stmntInsert.insert(entities, literals);
+		return new StatementInsertImpl<>(config).insert(entities, literals);
 	}
 
 	@Override
 	public SelectDownstream<T> select(String... fields) {
-		return stmntSelect.select(fields);
+		return new StatementSelectImpl<>(config).select(fields);
 	}
 
 	@Override
 	public SelectDownstream<T> select(Set<String> fields) {
-		return stmntSelect.select(fields);
+		return new StatementSelectImpl<>(config).select(fields);
 	}
 
 	@Override
 	public UpdateDownstream update(T entity, Literal... literals) {
-		return stmntUpdate.update(entity, literals);
+		return new StatementUpdateImpl<>(config).update(entity, literals);
 	}
 
 	public record ESConfig<ET>(DataSource ds, EntityMetaProc<ET> em) {

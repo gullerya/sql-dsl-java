@@ -101,7 +101,7 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 	}
 
 	@Override
-	public T readSingle() {
+	public T readOne() {
 		List<T> asList = internalRead(null, null);
 		if (asList.isEmpty()) {
 			return null;
@@ -113,12 +113,12 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 	}
 
 	@Override
-	public List<T> read() {
+	public List<T> readAll() {
 		return internalRead(null, null);
 	}
 
 	@Override
-	public List<T> read(int limit) {
+	public List<T> readAll(int limit) {
 		if (limit == 0) {
 			throw new IllegalArgumentException("limit MUST be greater than 0");
 		}
@@ -126,7 +126,7 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 	}
 
 	@Override
-	public List<T> read(int offset, int limit) {
+	public List<T> readAll(int offset, int limit) {
 		if (offset == 0) {
 			throw new IllegalArgumentException("offset MUST be greater than 0 ('read' methods without offset exists)");
 		}

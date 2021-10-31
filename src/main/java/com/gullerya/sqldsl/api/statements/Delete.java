@@ -9,7 +9,7 @@ public interface Delete<T> {
 	 *
 	 * @return number of affected rows
 	 */
-	int delete();
+	int deleteAll();
 
 	/**
 	 * delete records matching to the specified condition
@@ -17,5 +17,5 @@ public interface Delete<T> {
 	 * @param whereClause where clause; MUST NOT be NULL
 	 * @return number of affected rows
 	 */
-	int delete(Where.WhereClause whereClause);
+	int deleteAll(Where.WhereClause whereClause);
 }

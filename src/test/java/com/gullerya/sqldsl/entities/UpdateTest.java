@@ -48,7 +48,7 @@ public class UpdateTest {
 
 	@Test
 	public void testUpdateAll() {
-		usersService.delete();
+		usersService.deleteAll();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -65,7 +65,7 @@ public class UpdateTest {
 				.all();
 		assertEquals(5, updated);
 
-		List<User> users = usersService.select(Collections.singleton("state")).read();
+		List<User> users = usersService.select(Collections.singleton("state")).readAll();
 
 		assertNotNull(users);
 		assertEquals(5, users.size());
@@ -77,7 +77,7 @@ public class UpdateTest {
 
 	@Test
 	public void testUpdateSome() {
-		usersService.delete();
+		usersService.deleteAll();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -94,7 +94,7 @@ public class UpdateTest {
 				.where(or(Arrays.asList(eq("ready", false), and(eq("first_name", "Sam"), in("last_name", "1", "5")))));
 		assertEquals(4, updated);
 
-		List<User> users = usersService.select("id", "state").where(eq("state", 2)).orderBy(asc("id")).read();
+		List<User> users = usersService.select("id", "state").where(eq("state", 2)).orderBy(asc("id")).readAll();
 
 		assertNotNull(users);
 		assertEquals(4, users.size());
