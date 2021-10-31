@@ -70,7 +70,7 @@ public class InsertOneTest {
 		TestPrivateA t = insertsDal
 				.select("firstName", "lastName", "bdate", "active", "children", "height")
 				.where(Where.eq("firstName", "First"))
-				.readSingle();
+				.readOne();
 
 		assertEquals(o.firstName, t.firstName);
 		assertEquals(o.lastName, t.lastName);
@@ -93,7 +93,7 @@ public class InsertOneTest {
 		TestPrimitivesA t = insertsDal
 				.select("name", "active", "children", "height")
 				.where(Where.eq("name", "First"))
-				.readSingle();
+				.readOne();
 
 		assertEquals(o.name, t.name);
 		assertEquals(o.active, t.active);

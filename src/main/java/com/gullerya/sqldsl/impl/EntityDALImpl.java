@@ -11,6 +11,10 @@ import javax.sql.DataSource;
 import com.gullerya.sqldsl.EntityDAL;
 import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.clauses.Where;
+import com.gullerya.sqldsl.api.statements.Delete;
+import com.gullerya.sqldsl.api.statements.Insert;
+import com.gullerya.sqldsl.api.statements.Select;
+import com.gullerya.sqldsl.api.statements.Update;
 
 public class EntityDALImpl<T> implements EntityDAL<T> {
 	private final ESConfig<T> config;
@@ -21,13 +25,13 @@ public class EntityDALImpl<T> implements EntityDAL<T> {
 	}
 
 	@Override
-	public int delete() {
-		return new StatementDeleteImpl<>(config).delete();
+	public int deleteAll() {
+		return new StatementDeleteImpl<>(config).deleteAll();
 	}
 
 	@Override
-	public int delete(Where.WhereClause whereClause) {
-		return new StatementDeleteImpl<>(config).delete(whereClause);
+	public int deleteAll(Where.WhereClause whereClause) {
+		return new StatementDeleteImpl<>(config).deleteAll(whereClause);
 	}
 
 	@Override
@@ -55,15 +59,7 @@ public class EntityDALImpl<T> implements EntityDAL<T> {
 		return new StatementUpdateImpl<>(config).update(entity, literals);
 	}
 
-	public static final class ESConfig<ET> {
-		private final DataSource ds;
-		final EntityMetaProc<ET> em;
-
-		private ESConfig(DataSource ds, EntityMetaProc<ET> em) {
-			this.ds = ds;
-			this.em = em;
-		}
-
+	public record ESConfig<ET>(DataSource ds, EntityMetaProc<ET> em) {
 		<R> R prepareStatementAndDo(String sql, PreparedStatementAction<R> psAction) {
 			try (Connection c = ds.getConnection(); PreparedStatement s = c.prepareStatement(sql)) {
 				return psAction.execute(s);

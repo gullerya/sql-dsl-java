@@ -10,7 +10,7 @@ public interface SelectTermAction<T> {
 	 *
 	 * @return entity; MAY be NULL if none matched
 	 */
-	T readSingle();
+	T readOne();
 
 	/**
 	 * read all entities matching query, if any
@@ -18,7 +18,7 @@ public interface SelectTermAction<T> {
 	 *
 	 * @return list of entities; MAY be an EMPTY list; MAY NOT be NULL
 	 */
-	List<T> read();
+	List<T> readAll();
 
 	/**
 	 * read all entities matching query, if any
@@ -27,7 +27,7 @@ public interface SelectTermAction<T> {
 	 * @param limit limit number; MUST be greater than 0
 	 * @return list of entities; MAY be an EMPTY list; MAY NOT be NULL
 	 */
-	List<T> read(int limit);
+	List<T> readAll(int limit);
 
 	/**
 	 * read all entities matching query, if any
@@ -36,5 +36,5 @@ public interface SelectTermAction<T> {
 	 * @param limit  limit number; MUST be greater than 0
 	 * @return list of entities; MAY be an EMPTY list; MAY NOT be NULL
 	 */
-	List<T> read(int offset, int limit);
+	List<T> readAll(int offset, int limit);
 }

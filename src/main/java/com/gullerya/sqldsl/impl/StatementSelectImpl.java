@@ -39,9 +39,9 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 			if (f == null || f.isEmpty()) {
 				throw new IllegalArgumentException("field MUST NOT be NULL nor EMPTY");
 			}
-			if (!config.em.byColumn.containsKey(f)) {
+			if (!config.em().byColumn.containsKey(f)) {
 				throw new IllegalArgumentException(
-						"field '" + f + "' not found in entity " + config.em.type + " definition");
+						"field '" + f + "' not found in entity " + config.em().type + " definition");
 			}
 			tmp.add(f);
 		}
@@ -59,7 +59,7 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 
 	@Override
 	public WhereDownstream<T> where(WhereClause where) {
-		validateWhereClause(config.em, where);
+		validateWhereClause(config.em(), where);
 		this.where = where;
 		return this;
 	}
@@ -70,7 +70,7 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 			throw new IllegalArgumentException("group by fields MUST NOT be NULL nor EMPTY");
 		}
 		Set<String> tmp = new LinkedHashSet<>(Arrays.asList(fields));
-		validateGroupByClause(config.em, selectedFields, tmp);
+		validateGroupByClause(config.em(), selectedFields, tmp);
 		this.groupBy = tmp;
 		return this;
 	}
@@ -81,7 +81,7 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 			throw new IllegalArgumentException("having fields MUST NOT be NULL nor EMPTY");
 		}
 		Set<String> tmp = new LinkedHashSet<>(Arrays.asList(fields));
-		validateHavingClause(config.em, tmp);
+		validateHavingClause(config.em(), tmp);
 		throw new IllegalStateException("not implemented");
 	}
 
@@ -95,13 +95,13 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 		if (orderByMore != null && orderByMore.length > 0) {
 			tmp.addAll(Arrays.asList(orderByMore));
 		}
-		validateOrderByClause(config.em, groupBy, tmp);
+		validateOrderByClause(config.em(), groupBy, tmp);
 		this.orderBy = tmp;
 		return this;
 	}
 
 	@Override
-	public T readSingle() {
+	public T readOne() {
 		List<T> asList = internalRead(null, null);
 		if (asList.isEmpty()) {
 			return null;
@@ -113,12 +113,12 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 	}
 
 	@Override
-	public List<T> read() {
+	public List<T> readAll() {
 		return internalRead(null, null);
 	}
 
 	@Override
-	public List<T> read(int limit) {
+	public List<T> readAll(int limit) {
 		if (limit == 0) {
 			throw new IllegalArgumentException("limit MUST be greater than 0");
 		}
@@ -126,7 +126,7 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 	}
 
 	@Override
-	public List<T> read(int offset, int limit) {
+	public List<T> readAll(int offset, int limit) {
 		if (offset == 0) {
 			throw new IllegalArgumentException("offset MUST be greater than 0 ('read' methods without offset exists)");
 		}
@@ -137,8 +137,8 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 	}
 
 	private List<T> internalRead(Integer offset, Integer limit) {
-		String sql = "SELECT " + buildFieldsClause(config.em.fqSchemaTableName) + " FROM "
-				+ config.em.fqSchemaTableName;
+		String sql = "SELECT " + buildFieldsClause(config.em().fqSchemaTableName) + " FROM "
+				+ config.em().fqSchemaTableName;
 		Collection<WhereFieldValuePair> parametersCollector = new ArrayList<>();
 		if (where != null) {
 			sql += " WHERE " + where.stringify(parametersCollector);
@@ -160,7 +160,7 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 			int i = 0;
 			for (WhereFieldValuePair parameter : parametersCollector) {
 				i++;
-				FieldMetaProc fm = config.em.byColumn.get(parameter.column);
+				FieldMetaProc fm = config.em().byColumn.get(parameter.column);
 				Object pv = fm.translateFieldToColumn(parameter.value);
 				s.setObject(i, pv);
 			}
@@ -245,11 +245,11 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 		List<T> result = new ArrayList<>();
 
 		try {
-			Constructor<T> ctor = config.em.type.getDeclaredConstructor();
+			Constructor<T> ctor = config.em().type.getDeclaredConstructor();
 			while (rs.next()) {
 				T tmp = ctor.newInstance();
 				for (String f : selectedFields) {
-					FieldMetaProc fm = config.em.byColumn.get(f);
+					FieldMetaProc fm = config.em().byColumn.get(f);
 					String colName = fm.columnName;
 					Object dbValue = fm.getColumnValue(rs, colName);
 					fm.setFieldValue(tmp, dbValue);

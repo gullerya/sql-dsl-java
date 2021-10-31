@@ -6,26 +6,21 @@ import java.util.Collection;
 import com.gullerya.sqldsl.api.clauses.Where;
 import com.gullerya.sqldsl.api.statements.Delete;
 
-public class StatementDeleteImpl<T> implements Delete<T> {
-	private final EntityDALImpl.ESConfig<T> config;
-
-	StatementDeleteImpl(EntityDALImpl.ESConfig<T> config) {
-		this.config = config;
-	}
+public record StatementDeleteImpl<T>(EntityDALImpl.ESConfig<T> config) implements Delete<T> {
 
 	@Override
-	public int delete() {
+	public int deleteAll() {
 		return internalDelete(null);
 	}
 
 	@Override
-	public int delete(Where.WhereClause where) {
-		validateWhereClause(config.em, where);
+	public int deleteAll(Where.WhereClause where) {
+		validateWhereClause(config.em(), where);
 		return internalDelete(where);
 	}
 
 	private int internalDelete(Where.WhereClause where) {
-		String sql = "DELETE FROM " + config.em.fqSchemaTableName;
+		String sql = "DELETE FROM " + config.em().fqSchemaTableName;
 		Collection<Where.WhereFieldValuePair> parametersCollector = new ArrayList<>();
 		if (where != null) {
 			sql += " WHERE " + where.stringify(parametersCollector);
@@ -35,7 +30,7 @@ public class StatementDeleteImpl<T> implements Delete<T> {
 				int i = 0;
 				for (Where.WhereFieldValuePair parameter : parametersCollector) {
 					i++;
-					FieldMetaProc fm = config.em.byColumn.get(parameter.column);
+					FieldMetaProc fm = config.em().byColumn.get(parameter.column);
 					Object pv = fm.translateFieldToColumn(parameter.value);
 					s.setObject(i, pv);
 				}

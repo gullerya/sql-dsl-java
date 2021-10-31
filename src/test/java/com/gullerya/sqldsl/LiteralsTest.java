@@ -44,7 +44,7 @@ public class LiteralsTest {
 		int r = es.insert(e, Literal.exp("id", "DEFAULT"), Literal.exp("updated", "TIMEZONE('UTC', CURRENT_TIMESTAMP)"));
 		assertEquals(1, r);
 
-		LitTestEnt re = es.select("id", "price", "updated").where(eq("price", 2.4)).readSingle();
+		LitTestEnt re = es.select("id", "price", "updated").where(eq("price", 2.4)).readOne();
 		assertNotNull(re);
 		assertEquals(0, (long) re.id);
 		assertEquals(2.4, re.price.doubleValue(), 0);
@@ -63,7 +63,7 @@ public class LiteralsTest {
 				.select("id", "price", "updated")
 				.where(and(Arrays.asList(gte("id", 2000), lte("id", 2001))))
 				.orderBy(OrderBy.asc("updated"))
-				.read();
+				.readAll();
 		assertNotNull(re);
 		assertEquals(2, re.size());
 		assertEquals(2000, (long) re.get(0).id);
@@ -87,7 +87,7 @@ public class LiteralsTest {
 				.where(between("id", 3000, 3002));
 		assertEquals(3, ur);
 
-		List<LitTestEnt> re = es.select("price", "updated").where(between("id", 3000, 3002)).read();
+		List<LitTestEnt> re = es.select("price", "updated").where(between("id", 3000, 3002)).readAll();
 		assertNotNull(re);
 		assertEquals(3, re.size());
 		assertNull(re.get(0).price);

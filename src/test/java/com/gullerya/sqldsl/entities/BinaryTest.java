@@ -3,8 +3,7 @@ package com.gullerya.sqldsl.entities;
 import com.gullerya.sqldsl.DBUtils;
 import com.gullerya.sqldsl.EntityDAL;
 import com.gullerya.sqldsl.api.clauses.Where;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,7 +40,7 @@ public class BinaryTest {
 
 	@Test
 	public void createSingle() {
-		binConService.delete();
+		binConService.deleteAll();
 
 		//  insert single
 		byte[] av = new byte[]{1, 2, 3, 4, 5, 6, 7};
@@ -56,7 +55,7 @@ public class BinaryTest {
 		BinaryContainer br = binConService
 				.select("barray", "stream")
 				.where(Where.eq("id", 1000))
-				.readSingle();
+				.readOne();
 		assertNotNull(br);
 		assertArrayEquals(av, br.barray);
 		assertArrayEquals(sv, isToBytes(br.stream));
@@ -64,7 +63,7 @@ public class BinaryTest {
 
 	@Test
 	public void updateSingle() {
-		binConService.delete();
+		binConService.deleteAll();
 
 		//  insert single
 		byte[] av1 = new byte[]{1, 2, 3, 4, 5, 6, 7};
@@ -84,7 +83,7 @@ public class BinaryTest {
 		assertEquals(1, (int) binConService.update(bu).where(Where.eq("id", 2000)));
 
 		//  read single and verify
-		BinaryContainer br = binConService.select("barray", "stream").where(Where.eq("id", 2000)).readSingle();
+		BinaryContainer br = binConService.select("barray", "stream").where(Where.eq("id", 2000)).readOne();
 		assertNotNull(br);
 		assertArrayEquals(av2, br.barray);
 		assertArrayEquals(sv2, isToBytes(br.stream));
@@ -92,7 +91,7 @@ public class BinaryTest {
 
 	@Test
 	public void createSeveral() {
-		binConService.delete();
+		binConService.deleteAll();
 
 		//  insert several
 		List<BinaryContainer> csl = new ArrayList<>();
@@ -114,7 +113,7 @@ public class BinaryTest {
 		assertArrayEquals(new int[]{1, 1, 1}, binConService.insert(csl));
 
 		//  read several and verify
-		List<BinaryContainer> brs = binConService.select("id", "barray", "stream").read();
+		List<BinaryContainer> brs = binConService.select("id", "barray", "stream").readAll();
 		assertNotNull(brs);
 		assertEquals(3, brs.size());
 		for (BinaryContainer br : brs) {
@@ -126,7 +125,7 @@ public class BinaryTest {
 
 	@Test
 	public void updateSeveral() {
-		binConService.delete();
+		binConService.deleteAll();
 
 		//  insert several
 		List<BinaryContainer> csl = new ArrayList<>();
@@ -153,7 +152,7 @@ public class BinaryTest {
 		assertEquals(3, binConService.update(bu).all());
 
 		//  read several and verify
-		List<BinaryContainer> brs = binConService.select("id", "barray", "stream").read();
+		List<BinaryContainer> brs = binConService.select("id", "barray", "stream").readAll();
 		assertNotNull(brs);
 		assertEquals(3, brs.size());
 		for (BinaryContainer br : brs) {

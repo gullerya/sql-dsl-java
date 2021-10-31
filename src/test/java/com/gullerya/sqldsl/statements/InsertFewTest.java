@@ -91,7 +91,7 @@ public class InsertFewTest {
 		List<TestPrivateA> tf = insertsDal
 				.select("firstName", "lastName", "bdate", "active", "children", "height")
 				.orderBy(OrderBy.asc("firstName"))
-				.read();
+				.readAll();
 
 		assertEquals(total, tf.size());
 		for (int i = 0; i < total; i++) {
@@ -130,7 +130,7 @@ public class InsertFewTest {
 		List<TestPrimitivesA> tf = insertsDal
 				.select("name", "active", "b", "s", "children", "l", "f", "height")
 				.orderBy(OrderBy.asc("name"))
-				.read();
+				.readAll();
 
 		for (int i = 0; i < total; i++) {
 			TestPrimitivesA t = tf.get(i);

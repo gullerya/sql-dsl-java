@@ -48,7 +48,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadAll() {
-		EntityDAL.of(User.class, dataSource).delete();
+		EntityDAL.of(User.class, dataSource).deleteAll();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -62,7 +62,7 @@ public class SelectTest {
 
 		List<User> users = EntityDAL.of(User.class, dataSource)
 				.select("id", "state", "ready", "first_name", "birthday", "created")
-				.read();
+				.readAll();
 
 		assertNotNull(users);
 		assertEquals(5, users.size());
@@ -78,7 +78,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadOne() {
-		EntityDAL.of(User.class, dataSource).delete();
+		EntityDAL.of(User.class, dataSource).deleteAll();
 
 		User userToInsert = new User(2000L, 4, false, "Sam", "1", null);
 		int ir = EntityDAL.of(User.class, dataSource).insert(userToInsert);
@@ -87,7 +87,7 @@ public class SelectTest {
 		User user = EntityDAL.of(User.class, dataSource)
 				.select("id", "state", "first_name", "birthday")
 				.where(eq("id", 2000))
-				.readSingle();
+				.readOne();
 
 		assertNotNull(user);
 		assertEquals(2000, user.id);
@@ -98,7 +98,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadManyNoLimit() {
-		EntityDAL.of(User.class, dataSource).delete();
+		EntityDAL.of(User.class, dataSource).deleteAll();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -114,7 +114,7 @@ public class SelectTest {
 				.select("id", "state", "first_name", "last_name")
 				.where(and(eq("first_name", "Sam"), eq("state", 0)))
 				.orderBy(OrderBy.desc("id"), OrderBy.asc("last_name"))
-				.read();
+				.readAll();
 
 		assertNotNull(users);
 		assertEquals(3, users.size());
@@ -135,7 +135,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadManyWithLimitNoOffset() {
-		EntityDAL.of(User.class, dataSource).delete();
+		EntityDAL.of(User.class, dataSource).deleteAll();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -153,7 +153,7 @@ public class SelectTest {
 				.select("id", "state", "first_name", "last_name", "birthday")
 				.where(not(eq("state", 3)))
 				.orderBy(OrderBy.asc("first_name"))
-				.read(2);
+				.readAll(2);
 
 		assertNotNull(users);
 		assertEquals(2, users.size());
@@ -171,7 +171,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadManyWithOffsetNoLimit() {
-		EntityDAL.of(User.class, dataSource).delete();
+		EntityDAL.of(User.class, dataSource).deleteAll();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -191,7 +191,7 @@ public class SelectTest {
 				.select("id", "ready", "first_name", "last_name", "birthday", "locales")
 				.where(or(eq("ready", true), notEq("first_name", "Jim")))
 				.orderBy(OrderBy.desc("last_name"))
-				.read(2, Integer.MAX_VALUE);
+				.readAll(2, Integer.MAX_VALUE);
 
 		assertNotNull(users);
 		assertEquals(4, users.size());
@@ -226,7 +226,7 @@ public class SelectTest {
 
 	@Test
 	public void testReadManyWithLimitOffset() {
-		EntityDAL.of(User.class, dataSource).delete();
+		EntityDAL.of(User.class, dataSource).deleteAll();
 
 		List<User> usersToInsert = new ArrayList<>();
 		LocalDate bday = LocalDate.now();
@@ -246,9 +246,9 @@ public class SelectTest {
 				.select("id", "state", "first_name", "last_name", "birthday", "locales")
 				.where(in("id", Arrays.asList(6001, 6003, 6004, 6007)))
 				.orderBy(OrderBy.asc("state"), OrderBy.desc("last_name"))
-				.read(1, 2);
+				.readAll(1, 2);
 
-		EntityDAL.of(User.class, dataSource).delete();
+		EntityDAL.of(User.class, dataSource).deleteAll();
 
 		assertNotNull(users);
 		assertEquals(2, users.size());
@@ -362,7 +362,7 @@ public class SelectTest {
 
 	@Test
 	public void negativeJ1() {
-		User r = EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).readSingle();
+		User r = EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).readOne();
 		assertNull(r);
 	}
 
@@ -380,7 +380,7 @@ public class SelectTest {
 					EntityDAL.of(User.class, dataSource)
 							.select("id")
 							.where(or(eq("ready", false), eq("ready", true), isNull("ready"), isNotNull("ready")))
-							.readSingle();
+							.readOne();
 
 				}
 		);
@@ -390,7 +390,7 @@ public class SelectTest {
 	public void negativeK1() {
 		assertThrows(
 				IllegalArgumentException.class,
-				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(0)
+				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).readAll(0)
 		);
 	}
 
@@ -398,7 +398,7 @@ public class SelectTest {
 	public void negativeK2() {
 		assertThrows(
 				IllegalArgumentException.class,
-				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(0, 1)
+				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).readAll(0, 1)
 		);
 	}
 
@@ -406,7 +406,7 @@ public class SelectTest {
 	public void negativeK3() {
 		assertThrows(
 				IllegalArgumentException.class,
-				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(1, 0)
+				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).readAll(1, 0)
 		);
 	}
 

@@ -36,16 +36,16 @@ class StatementUpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
 
 	@Override
 	public Integer where(WhereClause where) {
-		validateWhereClause(config.em, where);
+		validateWhereClause(config.em(), where);
 		return internalUpdate(where);
 	}
 
 	private void validateCollect(Map<String, String> accumulator, Literal... literals) {
 		if (literals != null && literals.length > 0) {
 			for (Literal literal : literals) {
-				FieldMetaProc fm = config.em.byColumn.get((literal.column));
+				FieldMetaProc fm = config.em().byColumn.get((literal.column));
 				if (fm == null) {
-					throw new IllegalArgumentException("column '" + literal.column + "' is not defined for entity " + config.em.type);
+					throw new IllegalArgumentException("column '" + literal.column + "' is not defined for entity " + config.em().type);
 				}
 				if (!fm.column.insertable()) {
 					continue;
@@ -68,7 +68,7 @@ class StatementUpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
 	}
 
 	private void buildUpdateSet(T input) {
-		for (FieldMetaProc fm : config.em.byColumn.values()) {
+		for (FieldMetaProc fm : config.em().byColumn.values()) {
 			if (literalsSet.containsKey(fm.columnName)) {
 				continue;
 			}
@@ -85,7 +85,7 @@ class StatementUpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
 	}
 
 	private int internalUpdate(WhereClause where) {
-		String sql = "UPDATE " + config.em.fqSchemaTableName + " SET " + updateSet.keySet().stream().map(k -> k + "=?").collect(Collectors.joining(","));
+		String sql = "UPDATE " + config.em().fqSchemaTableName + " SET " + updateSet.keySet().stream().map(k -> k + "=?").collect(Collectors.joining(","));
 		if (!literalsSet.isEmpty()) {
 			sql += (updateSet.isEmpty() ? "" : ",") + literalsSet.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining(","));
 		}
@@ -103,7 +103,7 @@ class StatementUpdateImpl<T> implements Update<T>, Update.UpdateDownstream {
 			}
 			if (where != null) {
 				for (Where.WhereFieldValuePair parameter : parametersCollector) {
-					FieldMetaProc fm = config.em.byColumn.get(parameter.column);
+					FieldMetaProc fm = config.em().byColumn.get(parameter.column);
 					fm.setColumnValue(s, ++i, parameter.value);
 				}
 			}

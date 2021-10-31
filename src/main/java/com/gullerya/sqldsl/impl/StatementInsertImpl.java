@@ -15,12 +15,7 @@ import java.util.Map.Entry;
 import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.statements.Insert;
 
-public class StatementInsertImpl<T> implements Insert<T> {
-	private final EntityDALImpl.ESConfig<T> config;
-
-	StatementInsertImpl(EntityDALImpl.ESConfig<T> config) {
-		this.config = config;
-	}
+public record StatementInsertImpl<T>(EntityDALImpl.ESConfig<T> config) implements Insert<T> {
 
 	@Override
 	public int insert(T entity, Literal... literals) {
@@ -68,9 +63,9 @@ public class StatementInsertImpl<T> implements Insert<T> {
 	private void validateCollect(Map<String, String> accumulator, Literal... literals) {
 		if (literals != null && literals.length > 0) {
 			for (Literal literal : literals) {
-				FieldMetaProc fm = config.em.byColumn.get((literal.column));
+				FieldMetaProc fm = config.em().byColumn.get((literal.column));
 				if (fm == null) {
-					throw new IllegalArgumentException("field '" + literal.column + "' is not found in entity " + config.em.type);
+					throw new IllegalArgumentException("field '" + literal.column + "' is not found in entity " + config.em().type);
 				}
 				if (!fm.column.insertable()) {
 					continue;
@@ -82,7 +77,7 @@ public class StatementInsertImpl<T> implements Insert<T> {
 
 	private String buildInsertSet(T entity, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object>> params) {
 		Set<String> nonNullSet = new LinkedHashSet<>();
-		for (Entry<String, FieldMetaProc> e : config.em.byColumn.entrySet()) {
+		for (Entry<String, FieldMetaProc> e : config.em().byColumn.entrySet()) {
 			String cName = e.getKey();
 			FieldMetaProc fm = e.getValue();
 			if (literals.containsKey(cName)) {
@@ -104,12 +99,12 @@ public class StatementInsertImpl<T> implements Insert<T> {
 			fields += (nonNullSet.isEmpty() ? "" : ",") + String.join(",", literals.keySet());
 			values += (nonNullSet.isEmpty() ? "" : ",") + String.join(",", literals.values());
 		}
-		return "INSERT INTO " + config.em.fqSchemaTableName + " (" + fields + ")" + " VALUES (" + values + ")";
+		return "INSERT INTO " + config.em().fqSchemaTableName + " (" + fields + ")" + " VALUES (" + values + ")";
 	}
 
 	private String buildInsertSet(Collection<T> entities, Map<String, String> literals, List<Map.Entry<FieldMetaProc, Object[]>> params) {
 		Map<String, Map.Entry<FieldMetaProc, Object[]>> nonNullSet = new LinkedHashMap<>();
-		for (FieldMetaProc fm : config.em.byColumn.values()) {
+		for (FieldMetaProc fm : config.em().byColumn.values()) {
 			if (literals.containsKey(fm.columnName)) {
 				continue;
 			}
@@ -134,6 +129,6 @@ public class StatementInsertImpl<T> implements Insert<T> {
 			fields += "," + String.join(",", literals.keySet());
 			values += "," + String.join(",", literals.values());
 		}
-		return "INSERT INTO " + config.em.fqSchemaTableName + " (" + fields + ")" + " VALUES (" + values + ")";
+		return "INSERT INTO " + config.em().fqSchemaTableName + " (" + fields + ")" + " VALUES (" + values + ")";
 	}
 }
