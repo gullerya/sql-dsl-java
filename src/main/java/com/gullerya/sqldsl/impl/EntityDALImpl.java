@@ -11,8 +11,11 @@ import javax.sql.DataSource;
 import com.gullerya.sqldsl.EntityDAL;
 import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.clauses.Where;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntityDALImpl<T> implements EntityDAL<T> {
+	private static final Logger logger = LoggerFactory.getLogger(EntityDALImpl.class);
 	private final ESConfig<T> config;
 
 	public EntityDALImpl(Class<T> entityType, DataSource ds) throws ReflectiveOperationException {
@@ -57,6 +60,9 @@ public class EntityDALImpl<T> implements EntityDAL<T> {
 
 	public record ESConfig<ET>(DataSource ds, EntityMetaProc<ET> em) {
 		<R> R prepareStatementAndDo(String sql, PreparedStatementAction<R> psAction) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(sql);
+			}
 			try (Connection c = ds.getConnection(); PreparedStatement s = c.prepareStatement(sql)) {
 				return psAction.execute(s);
 			} catch (SQLException sqle) {
