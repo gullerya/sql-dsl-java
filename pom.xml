@@ -43,7 +43,7 @@
         <slf4j>1.7.30</slf4j>
 
         <!--BUILD-->
-        <jdk.version>11</jdk.version>
+        <jdk.version>17</jdk.version>
         <maven-clean-plugin>3.1.0</maven-clean-plugin>
         <maven-resources-plugin>3.2.0</maven-resources-plugin>
         <maven-compiler-plugin>3.8.1</maven-compiler-plugin>
