@@ -4,5 +4,4 @@ module com.gullerya.sqldsl {
 
 	exports com.gullerya.sqldsl;
 	exports com.gullerya.sqldsl.api.clauses;
-	exports com.gullerya.sqldsl.api.statements;
 }

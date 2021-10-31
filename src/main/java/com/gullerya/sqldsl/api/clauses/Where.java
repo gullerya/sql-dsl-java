@@ -11,14 +11,7 @@ public interface Where<S> {
 
 	S where(WhereClause where);
 
-	final class WhereFieldValuePair {
-		public final String column;
-		public final Object value;
-
-		private WhereFieldValuePair(String column, Object value) {
-			this.column = column;
-			this.value = value;
-		}
+	final record WhereFieldValuePair(String column, Object value) {
 	}
 
 	/**

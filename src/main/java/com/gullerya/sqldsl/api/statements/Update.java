@@ -1,7 +1,6 @@
 package com.gullerya.sqldsl.api.statements;
 
 import com.gullerya.sqldsl.Literal;
-import com.gullerya.sqldsl.UpdateTermAction;
 import com.gullerya.sqldsl.api.clauses.Where;
 
 public interface Update<T> {

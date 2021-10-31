@@ -2,10 +2,12 @@ package com.gullerya.sqldsl;
 
 import com.gullerya.sqldsl.api.statements.Select;
 
+import java.util.Map;
+
 public interface Join {
 
-	<T, K> void inner(Select.SelectDownstream<T> selectionA, Select.SelectDownstream<K> selectionB);
+	Map<String, ?> inner(Select.SelectDownstream<?>... joiners);
 
-	<T, K> void toward(Class<T> mainEntity, Select.SelectDownstream<T> selectionA, Select.SelectDownstream<K> selectionB);
+	Map<String, ?> toward(Select.SelectDownstream<?> primaryEntity, Select.SelectDownstream<?>... joiners);
 
 }

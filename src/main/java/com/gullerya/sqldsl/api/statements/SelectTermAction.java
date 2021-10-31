@@ -1,8 +1,8 @@
-package com.gullerya.sqldsl;
+package com.gullerya.sqldsl.api.statements;
 
 import java.util.List;
 
-public interface SelectTermAction<T> {
+interface SelectTermAction<T> {
 
 	/**
 	 * read a single entity
