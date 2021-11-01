@@ -58,7 +58,7 @@ public class EntityDALImpl<T> implements EntityDAL<T> {
 		return new StatementUpdateImpl<>(config).update(entity, literals);
 	}
 
-	public record ESConfig<ET>(DataSource ds, EntityMetaProc<ET> em) {
+	record ESConfig<ET>(DataSource ds, EntityMetaProc<ET> em) {
 		<R> R prepareStatementAndDo(String sql, PreparedStatementAction<R> psAction) {
 			if (logger.isDebugEnabled()) {
 				logger.debug(sql);
