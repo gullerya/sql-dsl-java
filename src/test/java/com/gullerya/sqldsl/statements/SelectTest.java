@@ -1,4 +1,4 @@
-package com.gullerya.sqldsl.entities;
+package com.gullerya.sqldsl.statements;
 
 import com.gullerya.sqldsl.DBUtils;
 import com.gullerya.sqldsl.EntityDAL;

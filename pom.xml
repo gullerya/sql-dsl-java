@@ -47,6 +47,8 @@
 		<maven-clean-plugin>3.1.0</maven-clean-plugin>
 		<maven-resources-plugin>3.2.0</maven-resources-plugin>
 		<maven-compiler-plugin>3.8.1</maven-compiler-plugin>
+
+		<!--PACK-->
 		<maven-jar-plugin>3.2.0</maven-jar-plugin>
 		<maven-source-plugin>3.2.0</maven-source-plugin>
 		<maven-javadoc-plugin>3.3.1</maven-javadoc-plugin>
