@@ -6,8 +6,12 @@ import java.util.Map;
 
 public interface Join {
 
-	Map<String, ?> inner(Select.SelectDownstream<?>... joiners);
+	static Map<String, ?> inner(Select.SelectDownstream<?>... joiners) {
+		return null;
+	}
 
-	Map<String, ?> toward(Select.SelectDownstream<?> primaryEntity, Select.SelectDownstream<?>... joiners);
+	static Map<String, ?> toward(Select.SelectDownstream<?> primaryEntity, Select.SelectDownstream<?>... joiners) {
+		return null;
+	}
 
 }
