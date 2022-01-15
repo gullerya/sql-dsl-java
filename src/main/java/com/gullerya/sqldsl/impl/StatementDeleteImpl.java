@@ -30,8 +30,8 @@ public record StatementDeleteImpl<T>(EntityDALImpl.ESConfig<T> config) implement
 				int i = 0;
 				for (Where.WhereFieldValuePair parameter : parametersCollector) {
 					i++;
-					FieldMetaProc fm = config.em().byColumn.get(parameter.column);
-					Object pv = fm.translateFieldToColumn(parameter.value);
+					FieldMetaProc fm = config.em().byColumn.get(parameter.column());
+					Object pv = fm.translateFieldToColumn(parameter.value());
 					s.setObject(i, pv);
 				}
 			}

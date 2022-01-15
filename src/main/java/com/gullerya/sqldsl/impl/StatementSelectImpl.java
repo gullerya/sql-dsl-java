@@ -160,8 +160,8 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 			int i = 0;
 			for (WhereFieldValuePair parameter : parametersCollector) {
 				i++;
-				FieldMetaProc fm = config.em().byColumn.get(parameter.column);
-				Object pv = fm.translateFieldToColumn(parameter.value);
+				FieldMetaProc fm = config.em().byColumn.get(parameter.column());
+				Object pv = fm.translateFieldToColumn(parameter.value());
 				s.setObject(i, pv);
 			}
 			try (ResultSet rs = s.executeQuery()) {
@@ -220,15 +220,15 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 
 	private void validateOrderByClause(EntityMetaProc<T> em, Set<String> groupByFields, Set<OrderByClause> orderByFields) {
 		for (OrderByClause obc : orderByFields) {
-			if (!em.byColumn.containsKey(obc.field)) {
-				throw new IllegalArgumentException("field '" + obc.field + "' not found in entity " + em.type + " definition");
+			if (!em.byColumn.containsKey(obc.field())) {
+				throw new IllegalArgumentException("field '" + obc.field() + "' not found in entity " + em.type + " definition");
 			}
 		}
 		if (groupByFields != null && !groupByFields.isEmpty()) {
 			List<String> ill = new ArrayList<>();
 			for (OrderByClause obc : orderByFields) {
-				if (!groupByFields.contains(obc.field)) {
-					ill.add(obc.field);
+				if (!groupByFields.contains(obc.field())) {
+					ill.add(obc.field());
 				}
 			}
 			if (!ill.isEmpty()) {

@@ -4,16 +4,11 @@ public interface OrderBy<S> {
 
 	S orderBy(OrderByClause orderBy, OrderByClause... orderByMore);
 
-	final class OrderByClause {
-		private final String direction;
-		public final String field;
-
-		private OrderByClause(String field, String direction) {
+	record OrderByClause(String field, String direction) {
+		public OrderByClause {
 			if (field == null || field.isEmpty()) {
 				throw new IllegalArgumentException("field MUST NOT be NULL nor EMPTY");
 			}
-			this.field = field;
-			this.direction = direction;
 		}
 
 		@Override

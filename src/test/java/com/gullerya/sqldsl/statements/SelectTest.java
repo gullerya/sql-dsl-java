@@ -1,4 +1,4 @@
-package com.gullerya.sqldsl.entities;
+package com.gullerya.sqldsl.statements;
 
 import com.gullerya.sqldsl.DBUtils;
 import com.gullerya.sqldsl.EntityDAL;
@@ -47,7 +47,7 @@ public class SelectTest {
 	}
 
 	@Test
-	public void testReadAll() {
+	public void testReadAllOld() {
 		EntityDAL.of(User.class, dataSource).deleteAll();
 
 		List<User> usersToInsert = new ArrayList<>();
