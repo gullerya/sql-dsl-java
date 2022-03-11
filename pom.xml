@@ -40,7 +40,7 @@
 
 	<properties>
 		<jpa>2.2</jpa>
-		<slf4j>1.7.32</slf4j>
+		<slf4j>1.7.36</slf4j>
 
 		<!--BUILD-->
 		<jdk.version>17</jdk.version>
@@ -59,14 +59,14 @@
 
 		<!--QUALITY-->
 		<skipTests>true</skipTests>
-		<log4j-slf4j-impl>2.14.1</log4j-slf4j-impl>
-		<junit>5.8.1</junit>
+		<log4j-slf4j-impl>2.17.0</log4j-slf4j-impl>
+		<junit>5.8.2</junit>
 		<spotbugs>4.4.2</spotbugs>
 		<maven-surefire-plugin>3.0.0-M5</maven-surefire-plugin>
 		<jacoco-maven-plugin>0.8.7</jacoco-maven-plugin>
-		<hikaricp>5.0.0</hikaricp>
-		<postgresql>42.3.1</postgresql>
-		<mssql-jdbc>9.4.0.jre16</mssql-jdbc>
+		<hikaricp>5.0.1</hikaricp>
+		<postgresql>42.3.3</postgresql>
+		<mssql-jdbc>10.2.0.jre17</mssql-jdbc>
 	</properties>
 
 	<dependencies>
