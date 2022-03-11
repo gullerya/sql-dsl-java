@@ -118,7 +118,7 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 	}
 
 	@Override
-	public List<T> readAll(int limit) {
+	public List<T> read(int limit) {
 		if (limit == 0) {
 			throw new IllegalArgumentException("limit MUST be greater than 0");
 		}
@@ -126,7 +126,7 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 	}
 
 	@Override
-	public List<T> readAll(int offset, int limit) {
+	public List<T> read(int offset, int limit) {
 		if (offset == 0) {
 			throw new IllegalArgumentException("offset MUST be greater than 0 ('read' methods without offset exists)");
 		}
@@ -160,8 +160,8 @@ public class StatementSelectImpl<T> implements Select<T>, Select.SelectDownstrea
 			int i = 0;
 			for (WhereFieldValuePair parameter : parametersCollector) {
 				i++;
-				FieldMetaProc fm = config.em().byColumn.get(parameter.column);
-				Object pv = fm.translateFieldToColumn(parameter.value);
+				FieldMetaProc fm = config.em().byColumn.get(parameter.column());
+				Object pv = fm.translateFieldToColumn(parameter.value());
 				s.setObject(i, pv);
 			}
 			try (ResultSet rs = s.executeQuery()) {

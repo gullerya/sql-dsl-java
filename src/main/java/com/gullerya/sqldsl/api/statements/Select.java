@@ -2,7 +2,6 @@ package com.gullerya.sqldsl.api.statements;
 
 import java.util.Set;
 
-import com.gullerya.sqldsl.SelectTermAction;
 import com.gullerya.sqldsl.api.clauses.GroupBy;
 import com.gullerya.sqldsl.api.clauses.Having;
 import com.gullerya.sqldsl.api.clauses.OrderBy;

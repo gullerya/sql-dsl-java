@@ -11,12 +11,11 @@ import javax.sql.DataSource;
 import com.gullerya.sqldsl.EntityDAL;
 import com.gullerya.sqldsl.Literal;
 import com.gullerya.sqldsl.api.clauses.Where;
-import com.gullerya.sqldsl.api.statements.Delete;
-import com.gullerya.sqldsl.api.statements.Insert;
-import com.gullerya.sqldsl.api.statements.Select;
-import com.gullerya.sqldsl.api.statements.Update;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EntityDALImpl<T> implements EntityDAL<T> {
+	private static final Logger logger = LoggerFactory.getLogger(EntityDALImpl.class);
 	private final ESConfig<T> config;
 
 	public EntityDALImpl(Class<T> entityType, DataSource ds) throws ReflectiveOperationException {
@@ -30,8 +29,8 @@ public class EntityDALImpl<T> implements EntityDAL<T> {
 	}
 
 	@Override
-	public int deleteAll(Where.WhereClause whereClause) {
-		return new StatementDeleteImpl<>(config).deleteAll(whereClause);
+	public int delete(Where.WhereClause whereClause) {
+		return new StatementDeleteImpl<>(config).delete(whereClause);
 	}
 
 	@Override
@@ -61,6 +60,9 @@ public class EntityDALImpl<T> implements EntityDAL<T> {
 
 	record ESConfig<ET>(DataSource ds, EntityMetaProc<ET> em) {
 		<R> R prepareStatementAndDo(String sql, PreparedStatementAction<R> psAction) {
+			if (logger.isDebugEnabled()) {
+				logger.debug(sql);
+			}
 			try (Connection c = ds.getConnection(); PreparedStatement s = c.prepareStatement(sql)) {
 				return psAction.execute(s);
 			} catch (SQLException sqle) {

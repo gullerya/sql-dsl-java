@@ -1,4 +1,4 @@
-package com.gullerya.sqldsl.entities;
+package com.gullerya.sqldsl.statements;
 
 import com.gullerya.sqldsl.DBUtils;
 import com.gullerya.sqldsl.EntityDAL;
@@ -153,7 +153,7 @@ public class SelectTest {
 				.select("id", "state", "first_name", "last_name", "birthday")
 				.where(not(eq("state", 3)))
 				.orderBy(OrderBy.asc("first_name"))
-				.readAll(2);
+				.read(2);
 
 		assertNotNull(users);
 		assertEquals(2, users.size());
@@ -191,7 +191,7 @@ public class SelectTest {
 				.select("id", "ready", "first_name", "last_name", "birthday", "locales")
 				.where(or(eq("ready", true), notEq("first_name", "Jim")))
 				.orderBy(OrderBy.desc("last_name"))
-				.readAll(2, Integer.MAX_VALUE);
+				.read(2, Integer.MAX_VALUE);
 
 		assertNotNull(users);
 		assertEquals(4, users.size());
@@ -246,7 +246,7 @@ public class SelectTest {
 				.select("id", "state", "first_name", "last_name", "birthday", "locales")
 				.where(in("id", Arrays.asList(6001, 6003, 6004, 6007)))
 				.orderBy(OrderBy.asc("state"), OrderBy.desc("last_name"))
-				.readAll(1, 2);
+				.read(1, 2);
 
 		EntityDAL.of(User.class, dataSource).deleteAll();
 
@@ -390,7 +390,7 @@ public class SelectTest {
 	public void negativeK1() {
 		assertThrows(
 				IllegalArgumentException.class,
-				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).readAll(0)
+				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(0)
 		);
 	}
 
@@ -398,7 +398,7 @@ public class SelectTest {
 	public void negativeK2() {
 		assertThrows(
 				IllegalArgumentException.class,
-				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).readAll(0, 1)
+				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(0, 1)
 		);
 	}
 
@@ -406,7 +406,7 @@ public class SelectTest {
 	public void negativeK3() {
 		assertThrows(
 				IllegalArgumentException.class,
-				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).readAll(1, 0)
+				() -> EntityDAL.of(User.class, dataSource).select("id").where(eq("id", 9999)).read(1, 0)
 		);
 	}
 
