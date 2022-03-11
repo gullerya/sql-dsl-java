@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sqldsl</artifactId>
+	<artifactId>sql-dsl</artifactId>
 	<groupId>com.gullerya</groupId>
 	<version>1.0-SNAPSHOT</version>
 
@@ -47,6 +47,8 @@
 		<maven-clean-plugin>3.1.0</maven-clean-plugin>
 		<maven-resources-plugin>3.2.0</maven-resources-plugin>
 		<maven-compiler-plugin>3.8.1</maven-compiler-plugin>
+
+		<!--PACK-->
 		<maven-jar-plugin>3.2.0</maven-jar-plugin>
 		<maven-source-plugin>3.2.0</maven-source-plugin>
 		<maven-javadoc-plugin>3.3.1</maven-javadoc-plugin>
