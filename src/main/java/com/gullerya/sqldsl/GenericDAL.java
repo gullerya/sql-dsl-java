@@ -22,6 +22,11 @@ public interface GenericDAL {
 		return null;
 	}
 
+	static void inTransaction() {
+		boolean transaction = true;
+
+	}
+
 	private static void validateDataSource(DataSource ds) {
 		if (ds == null) {
 			throw new IllegalArgumentException("data source MUST NOT be NULL");
