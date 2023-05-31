@@ -4,14 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>sql-dsl</artifactId>
+	<artifactId>query-dsl</artifactId>
 	<groupId>com.gullerya</groupId>
 	<version>1.0-SNAPSHOT</version>
 
-	<name>SQL DSL (Java)</name>
+	<name>Query DSL (Java)</name>
 	<description>
-		SQL queries builder and executor, implemented in Java. Featured by strongly typed validations, simplicity of
-		use.
+		REST and SQL query utilities.
 	</description>
 	<url>https://github.com/gullerya/sql-dsl-java</url>
 
