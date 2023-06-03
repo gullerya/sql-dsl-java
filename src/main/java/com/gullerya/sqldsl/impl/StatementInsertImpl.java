@@ -61,7 +61,7 @@ public record StatementInsertImpl<T>(EntityDALImpl.ESConfig<T> config) implement
 	}
 
 	private void validateCollect(Map<String, String> accumulator, Literal... literals) {
-		if (literals != null && literals.length > 0) {
+		if (literals != null) {
 			for (Literal literal : literals) {
 				FieldMetaProc fm = config.em().byColumn.get((literal.column));
 				if (fm == null) {

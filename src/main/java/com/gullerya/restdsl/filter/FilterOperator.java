@@ -5,13 +5,13 @@ public enum FilterOperator {
 	OR("or", true),
 	NOT("not", true),
 	IN("in", false),
-	EQUAL("eq", false),
+	EQUAL("e", false),
 	NOT_EQUAL("ne", false),
-	LIKE("lk", false),
+	LIKE("l", false),
 	NOT_LIKE("nl", false),
-	GREATER("gt", false),
+	GREATER("g", false),
 	GREATER_OR_EQUAL("ge", false),
-	LESSER("lt", false),
+	LESSER("l", false),
 	LESSER_OR_EQUAL("le", false);
 
 	private final String token;
