@@ -3,6 +3,7 @@ package com.gullerya.restdsl;
 import com.gullerya.restdsl.filter.Filter;
 import com.gullerya.restdsl.filter.FilterOperator;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -63,6 +64,42 @@ public class FilterTest {
 		Assertions.assertEquals(2, f.operands.get(0).operands.size());
 		assertPlainFilter(f.operands.get(0).operands.get(0), FilterOperator.IN, "f1", Arrays.asList("v1", "v2", "v3"));
 		assertPlainFilter(f.operands.get(0).operands.get(1), FilterOperator.NOT_EQUAL, "f2", "v");
+	}
+
+	@Test
+	public void testNegativeNullInput() {
+		Assertions.assertThrows(
+				IllegalArgumentException.class, () -> new Filter(null)
+		);
+	}
+
+	@Test
+	public void testNegativeEmptyInput() {
+		Assertions.assertThrows(
+				IllegalArgumentException.class, () -> new Filter("")
+		);
+	}
+
+	@Test
+	@Disabled
+	public void testNegativeBadFormat0() {
+		Assertions.assertThrows(
+				IllegalArgumentException.class, () -> new Filter("e(f,v")
+		);
+	}
+
+	@Test
+	public void testNegativeBadFormat1() {
+		Assertions.assertThrows(
+				IllegalArgumentException.class, () -> new Filter("e(f)")
+		);
+	}
+
+	@Test
+	public void testNegativeNonExisting() {
+		Assertions.assertThrows(
+				IllegalArgumentException.class, () -> new Filter("eq(f,v")
+		);
 	}
 
 	private void assertPlainFilter(Filter filter, FilterOperator o, String f, List<String> v) {

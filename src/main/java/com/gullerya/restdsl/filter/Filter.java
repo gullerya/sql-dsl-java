@@ -25,6 +25,10 @@ public class Filter {
 	}
 
 	private Filter(ParseContext parseContext) {
+		if (parseContext.input == null || parseContext.input.length < 1) {
+			throw new IllegalArgumentException("invalid input: " + (parseContext.input == null ? "null" : new String(parseContext.input)));
+		}
+
 		this.operator = parseOperator(parseContext);
 		if (operator.composite) {
 			field = null;
@@ -46,18 +50,23 @@ public class Filter {
 		} else {
 			operands = null;
 			List<String> tokens = parseTokens(parseContext, parseContext.splitter, parseContext.closer);
+			if (tokens.size() < 2) {
+				throw new IllegalArgumentException("too few values");
+			}
 			field = tokens.get(0);
 			values = Collections.unmodifiableList(tokens.subList(1, tokens.size()));
 		}
 	}
 
-	private static List<String> parseTokens(ParseContext parseContext, char splitter, char stopper) {
+	private static List<String> parseTokens(ParseContext parseContext, char splitter, char closer) {
 		List<String> result = new ArrayList<>();
 		StringBuilder token = new StringBuilder();
 		int currentIndex = parseContext.index;
 		char currentChar = parseContext.input[currentIndex];
+		boolean closerFound = false;
 		while (currentIndex < parseContext.input.length - 1) {
-			if (currentChar == stopper) {
+			if (currentChar == closer) {
+				closerFound = true;
 				break;
 			} else if (currentChar == splitter) {
 				result.add(token.toString());
