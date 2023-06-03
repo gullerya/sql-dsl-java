@@ -63,10 +63,8 @@ public class Filter {
 		StringBuilder token = new StringBuilder();
 		int currentIndex = parseContext.index;
 		char currentChar = parseContext.input[currentIndex];
-		boolean closerFound = false;
 		while (currentIndex < parseContext.input.length - 1) {
 			if (currentChar == closer) {
-				closerFound = true;
 				break;
 			} else if (currentChar == splitter) {
 				result.add(token.toString());

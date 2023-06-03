@@ -89,7 +89,15 @@ public class FilterTest {
 	}
 
 	@Test
+	@Disabled
 	public void testNegativeBadFormat1() {
+		Assertions.assertThrows(
+				IllegalArgumentException.class, () -> new Filter("and(e(f,v),ne(a,b)")
+		);
+	}
+
+	@Test
+	public void testNegativeBadFormat2() {
 		Assertions.assertThrows(
 				IllegalArgumentException.class, () -> new Filter("e(f)")
 		);
